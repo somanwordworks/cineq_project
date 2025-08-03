@@ -30,7 +30,7 @@ export default function Home({ reviews, trailers }) {
                         alt="CINEQ Banner"
                         width={1920}
                         height={500}
-                        className="rounded-xl w-full"
+                        className="rounded-xl w-full h-auto object-cover"
                         priority
                     />
                 </div>
@@ -38,7 +38,7 @@ export default function Home({ reviews, trailers }) {
                 {/* 🔁 Scrolling Promo Banner */}
                 <div className="bg-black py-2 mb-8 rounded shadow overflow-hidden">
                     <div className="whitespace-nowrap animate-marquee text-green-400 text-lg font-semibold">
-                        🎯 Promote your movie, OTT show, or trailer here – contact CINEQ for banner space, featured posts, or hero visibility! 🔥
+                        🌟 Promote your movie, OTT show, or trailer here – contact CINEQ for banner space, featured posts, or hero visibility! 🔥
                     </div>
                 </div>
 
@@ -49,12 +49,12 @@ export default function Home({ reviews, trailers }) {
                         <div>
                             <h2 className="text-3xl font-bold mb-6 text-center">🎬 Latest Movie Reviews</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {reviews.map((review) => (
+                                {reviews?.length > 0 ? reviews.map((review) => (
                                     <div
                                         key={review.slug}
                                         className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
                                     >
-                                        <div className="w-full h-[260px] flex items-center justify-center overflow-hidden">
+                                        <div className="w-full h-[260px] flex items-center justify-center overflow-hidden bg-gray-100">
                                             <Image
                                                 src={review.poster || '/placeholder.jpg'}
                                                 alt={review.title}
@@ -74,7 +74,7 @@ export default function Home({ reviews, trailers }) {
                                             <p className="text-xs text-gray-500">📅 {review.releaseDate}</p>
                                         </div>
                                     </div>
-                                ))}
+                                )) : <p className="text-center text-gray-500">No reviews available.</p>}
                             </div>
                         </div>
 
@@ -82,7 +82,7 @@ export default function Home({ reviews, trailers }) {
                         <div>
                             <h2 className="text-3xl font-bold mb-6 text-center">🎞️ Watch Latest Trailers</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {trailers.map((trailer, idx) => (
+                                {trailers?.length > 0 ? trailers.map((trailer, idx) => (
                                     <div key={idx} className="bg-white shadow-md rounded-lg overflow-hidden">
                                         <div className="aspect-video">
                                             <iframe
@@ -97,7 +97,7 @@ export default function Home({ reviews, trailers }) {
                                             <h3 className="text-base font-bold text-gray-800">{trailer.title}</h3>
                                         </div>
                                     </div>
-                                ))}
+                                )) : <p className="text-center text-gray-500">No trailers available.</p>}
                             </div>
                         </div>
                     </div>
