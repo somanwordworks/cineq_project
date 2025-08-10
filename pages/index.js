@@ -85,7 +85,7 @@ async function fetchUpcomingTeluguServer() {
 }
 
 /* ---------------------------- getStaticProps ----------------------------- */
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const [reviews, trailers, gossips] = await Promise.all([
         getReviews().catch(() => []),
         getTrailers().catch(() => []),
@@ -94,7 +94,7 @@ export async function getStaticProps() {
 
     let telugu = []
     try {
-        // Allow skipping SSR via env if needed: SKIP_SSR_TMDB=1
+        // Keep your existing server fetch logic
         if (process.env.SKIP_SSR_TMDB !== '1') {
             telugu = await fetchUpcomingTeluguServer()
         }
@@ -104,7 +104,6 @@ export async function getStaticProps() {
 
     return {
         props: { reviews, trailers, gossips, telugu },
-        revalidate: 1800,
     }
 }
 
