@@ -1,22 +1,18 @@
-import Image from 'next/image';
-import Link from 'next/link';
+﻿import Image from 'next/image';
 
 export default function Header() {
-  return (
-    <header className="shadow-md py-4">
-      <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
-        <Link href="/">
-          <Image
-            src="/03c7e4b9-d677-4bae-9032-1fcb8db702ec.png"
-            alt="CINEQ Logo"
-            width={120}
-            height={50}
-            className="cursor-pointer"
-          />
-        </Link>
-        {/* Empty space for future nav or ads if needed */}
-        <div></div>
-      </div>
-    </header>
-  );
+    return (
+        <header className="flex justify-between items-center p-4 bg-white shadow-md w-full">
+            {/* Logo */}
+            <div className="flex items-center">
+                <Image
+                    src="/cineq_logo.png" // Make sure logo is inside public/
+                    alt="CINEQ Logo"
+                    width={160}
+                    height={50}
+                    priority
+                />
+            </div>
+        </header>
+    );
 }

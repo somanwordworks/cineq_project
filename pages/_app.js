@@ -1,7 +1,11 @@
-import '../styles/globals.css'
+import '../styles/globals.css';
+import DisclaimerModal from '../components/DisclaimerModal';
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+export default function App({ Component, pageProps }) {
+  return (
+    <>
+      <DisclaimerModal />
+      <Component {...pageProps} />
+    </>
+  );
 }
-
-export default MyApp
