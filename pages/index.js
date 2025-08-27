@@ -163,7 +163,7 @@ function CineqTeluguRow({ items }) {
         </section>
     )
 }
-c
+
 /* ------------------------- Radar OTT ------------------------- */
 function CineqOTTRow() {
     const [list, setList] = useState([])
