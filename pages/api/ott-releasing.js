@@ -6,7 +6,7 @@ export const revalidate = 0;
 const V3 = process.env.TMDB_API_KEY;
 const V4 = process.env.TMDB_ACCESS_TOKEN;
 
-// 🟢 Simple in-memory cache (resets if server restarts)
+// 🟢 In-memory cache (resets if server restarts)
 let cache = { data: null, expiry: 0 };
 
 function authOpts() {
@@ -35,45 +35,48 @@ async function safeFetch(url) {
     }
 }
 
-// 🟢 Small delay to avoid hitting TMDB too fast
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 export default async function handler(req, res) {
     if (!V3 && !V4) return res.status(500).json({ error: "TMDB key missing" });
 
     const now = Date.now();
-    if (cache.data && cache.expiry > now) {
+    const forceRefresh = req.query.force === "true";
+
+    if (!forceRefresh && cache.data && cache.expiry > now) {
         console.log("⚡ Serving OTT results from cache");
         res.setHeader("Cache-Control", "no-store, max-age=0");
         return res.status(200).json({ results: cache.data });
     }
 
     const today = new Date();
-    const past15 = new Date(today);
-    past15.setDate(today.getDate() - 60);
 
-    const plus180 = new Date(today);
-    plus180.setDate(today.getDate() + 180);
+    // Past 60 days
+    const past60 = new Date(today);
+    past60.setDate(today.getDate() - 60);
+
+    // Future 45 days
+    const plus45 = new Date(today);
+    plus45.setDate(today.getDate() + 45);
 
     let finalList = [];
 
     try {
-        // Discover Indian movies
         const discover = new URL("https://api.themoviedb.org/3/discover/movie");
         discover.searchParams.set("region", "IN");
-        discover.searchParams.set("primary_release_date.gte", toISO(past15));
-        discover.searchParams.set("primary_release_date.lte", toISO(plus180));
+        discover.searchParams.set("primary_release_date.gte", toISO(past60));
+        discover.searchParams.set("primary_release_date.lte", toISO(plus45));
         discover.searchParams.set("sort_by", "primary_release_date.asc");
-        discover.searchParams.set("with_original_language", "te");
+        discover.searchParams.set("with_original_language", "te"); // Telugu only
         addKey(discover);
 
         const moviesResp = await safeFetch(discover);
         if (moviesResp) {
-            const movies = (moviesResp?.results || []).slice(0, 23);
-            console.log("🎬 Found", movies.length, "Indian movies (-15 to +180 days)");
+            const movies = (moviesResp?.results || []).slice(0, 40);
+            console.log("🎬 Found", movies.length, "Telugu movies (-60 to +45 days)");
 
             for (const m of movies) {
-                await delay(300); // 🟢 throttle calls (300ms delay between requests)
+                await delay(300); // 🟢 throttle
 
                 let platform = "TBA";
                 try {
@@ -94,7 +97,7 @@ export default async function handler(req, res) {
                     title: m.title || m.original_title,
                     releaseDate: m.release_date || "TBA",
                     poster: m.poster_path ? `https://image.tmdb.org/t/p/w342${m.poster_path}` : null,
-                    platform
+                    platform,
                 });
             }
         }
@@ -102,20 +105,20 @@ export default async function handler(req, res) {
         console.error("❌ OTT discover error:", e.message);
     }
 
-    // 🟢 Guaranteed fallback if nothing fetched
+    // Fallback if no results
     if (!finalList.length) {
         console.warn("⚠️ No OTT data from TMDB, returning fallback placeholders");
         finalList = [
             { id: "f1", title: "OTT Release Coming Soon", releaseDate: "TBA", poster: null, platform: "TBA" },
             { id: "f2", title: "Awaiting Provider Data", releaseDate: "TBA", poster: null, platform: "TBA" },
-            { id: "f3", title: "OTT Title Placeholder", releaseDate: "TBA", poster: null, platform: "TBA" }
+            { id: "f3", title: "OTT Title Placeholder", releaseDate: "TBA", poster: null, platform: "TBA" },
         ];
     }
 
     console.log("✅ Returning", finalList.length, "OTT results");
 
-    // Cache for 6 hours
-    cache = { data: finalList, expiry: now + 21600000 };
+    // Cache for 1 hour
+    cache = { data: finalList, expiry: now + 3600000 };
 
     res.setHeader("Cache-Control", "no-store, max-age=0");
     return res.status(200).json({ results: finalList });

@@ -2,17 +2,17 @@
 import Head from 'next/head'
 import Header from '../components/Header'
 import DisclaimerModal from '../components/DisclaimerModal'
-import { getReviews, getTrailers, getGossips } from '../lib/airtable'
+import { getReviews, getTrailers, getGossips, getMustWatchOTT, getRetrospect } from '../lib/airtable'
 import BiggBossWinners from "../components/BiggBoss";
 import PosterPathshalaDemo from "../components/PosterPathshalaDemo";
 import BirthdayBanner from "../components/BirthdayBanner";
 
+/* ------------------------- Utils ------------------------- */
 const formatDate = (date) =>
     new Intl.DateTimeFormat('en-GB', {
         day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata',
     }).format(date).replace(',', '')
 
-/* ------------------------- Helpers ------------------------- */
 const TELUGU = 'te'
 const toISO = (d) => d.toISOString().slice(0, 10)
 function mapResults(list) {
@@ -25,6 +25,7 @@ function mapResults(list) {
     }))
 }
 
+/* ------------------------- Server fetch (TMDB) ------------------------- */
 async function fetchUpcomingTeluguServer() {
     const v3 = process.env.TMDB_API_KEY
     const v4 = process.env.TMDB_ACCESS_TOKEN
@@ -66,26 +67,30 @@ async function fetchUpcomingTeluguServer() {
 }
 
 export async function getServerSideProps() {
-    const [reviews, trailers, gossips] = await Promise.all([
+    const [reviews, trailers, gossips, mustWatch, retrospect] = await Promise.all([
         getReviews().catch(() => []),
         getTrailers().catch(() => []),
         getGossips().catch(() => []),
-    ])
+        getMustWatchOTT().catch(() => []),
+        getRetrospect().catch(() => []),   // ✅ now assigned to retrospect
+    ]);
 
-    let telugu = []
+    let telugu = [];
     try {
-        telugu = await fetchUpcomingTeluguServer()
+        telugu = await fetchUpcomingTeluguServer();
     } catch { }
 
-    return { props: { reviews, trailers, gossips, telugu } }
+    return { props: { reviews, trailers, gossips, mustWatch, retrospect, telugu } };
 }
 
-/* ------------------------- Radar Telugu ------------------------- */
-function CineqTeluguRow({ items }) {
+
+/* ================== COMPACT VARIANTS (for left/right layout) ================== */
+
+/* -------- CINEQ Radar · Telugu -------- */
+function CineqTeluguRow({ items, compact = false }) {
     const [list, setList] = useState(items || [])
     const [votes, setVotes] = useState({})
 
-    // 👉 Helpers to avoid UTC drift and compare cleanly in IST
     const toLocalMidnight = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x }
     const parseIST = (s) => new Date(`${s}T00:00:00+05:30`)
     const today = toLocalMidnight(new Date())
@@ -106,26 +111,24 @@ function CineqTeluguRow({ items }) {
         return base + " bg-gray-100 text-gray-700 border-gray-200"
     }
 
-    // Status (used only for visible cards: future-dated or announced)
     const statusFor = (releaseDate) => {
         if (!releaseDate || releaseDate === 'Coming Soon') return { label: 'Coming Soon', tone: 'announcement' }
         const d = parseIST(releaseDate)
         if (isNaN(d.getTime())) return { label: 'TBA', tone: 'muted' }
         if (toLocalMidnight(d) > today) return { label: 'Releasing Soon', tone: 'soon', date: d }
-        return { label: 'Released', tone: 'released', date: d } // (won’t render due to filter below)
+        return { label: 'Released', tone: 'released', date: d }
     }
 
-    // 🔥 Filter: keep only strictly-future items (and announcements with no date)
     const upcomingOnly = (list || []).filter(m => {
-        if (!m.releaseDate || m.releaseDate === 'Coming Soon') return true   // keep announcements
+        if (!m.releaseDate || m.releaseDate === 'Coming Soon') return true
         const d = parseIST(m.releaseDate)
-        if (isNaN(d.getTime())) return true                                  // keep TBA/invalid dates
-        return toLocalMidnight(d) > today                                    // strictly future; today/past removed
+        if (isNaN(d.getTime())) return true
+        return toLocalMidnight(d) > today
     })
 
     return (
-        <section className="max-w-7xl mx-auto px-4 py-2 mb-12">
-            <h2 className="text-2xl font-semibold mb-3">CINEQ Radar · Telugu</h2>
+        <section className={compact ? "" : "max-w-7xl mx-auto px-4 py-2 mb-12"}>
+            <h2 className={`font-semibold mb-3 ${compact ? "text-xl" : "text-2xl"}`}>CINEQ Radar · Telugu</h2>
             <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                 <div className="flex gap-4 pr-4 snap-x snap-mandatory">
                     {upcomingOnly.map(m => {
@@ -147,12 +150,8 @@ function CineqTeluguRow({ items }) {
                                         {st.date ? `Release: ${formatDate(st.date)}` : 'Production Announced'}
                                     </div>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <button className={`flex-1 h-8 rounded-xl border text-xs ${v === 1 ? 'bg-green-600 text-white' : 'bg-white hover:bg-green-50'}`}>
-                                            👍 Like
-                                        </button>
-                                        <button className={`flex-1 h-8 rounded-xl border text-xs ${v === -1 ? 'bg-red-600 text-white' : 'bg-white hover:bg-red-50'}`}>
-                                            👎 Dislike
-                                        </button>
+                                        <button className={`flex-1 h-8 rounded-xl border text-xs ${v === 1 ? 'bg-green-600 text-white' : 'bg-white hover:bg-green-50'}`}>👍 Like</button>
+                                        <button className={`flex-1 h-8 rounded-xl border text-xs ${v === -1 ? 'bg-red-600 text-white' : 'bg-white hover:bg-red-50'}`}>👎 Dislike</button>
                                     </div>
                                 </div>
                             </article>
@@ -164,9 +163,10 @@ function CineqTeluguRow({ items }) {
     )
 }
 
-/* ------------------------- Radar OTT ------------------------- */
-function CineqOTTRow() {
+/* -------- CINEQ Radar · OTT (Telugu) -------- */
+function CineqOTTRow({ compact = false }) {
     const [list, setList] = useState([])
+
     useEffect(() => {
         fetch('/api/ott-releasing?ts=' + Date.now())
             .then(r => r.json())
@@ -175,19 +175,24 @@ function CineqOTTRow() {
 
     const badgeClass = (tone) => {
         const base = "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border"
-        if (tone === 'released') return base + " bg-green-100 text-green-800 border-green-200"
-        if (tone === 'announcement') return base + " bg-blue-100 text-blue-800 border-blue-200"
+        if (tone === 'released')
+            return base + " bg-green-100 text-green-800 border-green-200"
+        if (tone === 'announcement')
+            return base + " bg-blue-100 text-blue-800 border-blue-200"
         return base + " bg-gray-100 text-gray-700 border-gray-200"
     }
 
     const statusForOTT = (platform) => {
-        if (!platform || platform === "TBA") return { label: "Platform TBA", tone: "announcement" }
+        if (!platform || platform === "TBA")
+            return { label: "Platform TBA", tone: "announcement" }
         return { label: platform, tone: "released" }
     }
 
     return (
-        <section className="max-w-7xl mx-auto px-4 py-2 mb-12">
-            <h2 className="text-2xl font-semibold mb-3">CINEQ Radar · OTT (Telugu)</h2>
+        <section className={compact ? "" : "max-w-7xl mx-auto px-4 py-2 mb-12"}>
+            <h2 className={`font-semibold mb-3 ${compact ? "text-xl" : "text-2xl"}`}>
+                CINEQ Radar · OTT (Telugu)
+            </h2>
             <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                 <div className="flex gap-4 pr-4 snap-x snap-mandatory">
                     {list.map(m => {
@@ -196,7 +201,11 @@ function CineqOTTRow() {
                             <article key={m.id} className="min-w-[180px] sm:w-[200px] rounded-2xl border bg-white overflow-hidden hover:shadow-md transition snap-start">
                                 <div className="relative">
                                     <div className="aspect-[2/3] bg-gray-100">
-                                        <img src={m.poster || 'https://placehold.co/342x513?text=No+Poster'} alt={m.title} className="w-full h-full object-cover" />
+                                        <img
+                                            src={m.poster || 'https://placehold.co/342x513?text=No+Poster'}
+                                            alt={m.title}
+                                            className="w-full h-full object-cover"
+                                        />
                                     </div>
                                     <div className="absolute top-2 right-2">
                                         <span className={badgeClass(st.tone)}>{st.label}</span>
@@ -215,8 +224,75 @@ function CineqOTTRow() {
     )
 }
 
+
+/* -------- CINEQ Speaks (fills right column; inner scroll) -------- */
+function CINEQSpeaks({ compact = false, maxItems = 50 }) {
+    const [notes, setNotes] = useState([])
+
+    useEffect(() => {
+        let isMounted = true
+        async function fetchSpeaks() {
+            try {
+                const res = await fetch('/api/speaks?ts=' + Date.now())
+                const data = await res.json()
+                if (isMounted) setNotes(Array.isArray(data) ? data : [])
+            } catch (e) {
+                console.error('Failed to load CINEQ Speaks:', e)
+            }
+        }
+        fetchSpeaks()
+        return () => { isMounted = false }
+    }, [])
+
+    const ordered = [...notes]
+        .filter(n => n?.content)
+        .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+        .slice(0, maxItems)
+
+    return (
+        <section className={compact ? "" : "max-w-7xl mx-auto px-4 py-2 mb-12"}>
+            <h2 className={`font-semibold mb-3 flex items-center gap-2 ${compact ? "text-xl" : "text-2xl"}`}>
+                <span role="img" aria-label="mic">🎙️</span> CINEQ Speaks
+            </h2>
+
+            {/* Card fills the sticky container; inner content scrolls (no border clipping) */}
+            <div className="rounded-2xl border bg-white shadow-sm h-full">
+                <div className="h-full overflow-y-auto custom-thin-scroll">
+                    {ordered.length === 0 ? (
+                        <div className="p-4 text-gray-500 italic">
+                            No editorial notes yet... CINEQ will speak soon!
+                        </div>
+                    ) : (
+                        ordered.map((note, idx) => (
+                            <div key={note.id} className={`p-5 ${idx !== ordered.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                                <p className="text-gray-800 leading-relaxed">“{note.content}”</p>
+                                <div className="mt-2 flex items-center justify-between">
+                                    <span className="text-sm text-gray-500">— {note.author || 'CINEQ'}</span>
+                                    {note.date ? (
+                                        <span className="text-xs text-gray-400">
+                                            {new Date(note.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </span>
+                                    ) : null}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+        </section>
+    )
+}
+
 /* ------------------------- Page ------------------------- */
-export default function Home({ reviews = [], trailers = [], gossips = [], telugu = [] }) {
+export default function Home({
+    reviews = [],
+    trailers = [],
+    gossips = [],
+    mustWatch = [],
+    retrospect = [],   // ✅ added
+    telugu = [],
+}) {
+
     return (
         <>
             <Head>
@@ -227,6 +303,8 @@ export default function Home({ reviews = [], trailers = [], gossips = [], telugu
             <Header />
 
             <main className="max-w-7xl mx-auto px-4 py-6 scroll-smooth">
+                {/* Optional: <DisclaimerModal /> */}
+
                 <div className="mb-6">
                     <img src="/hero-banner.jpg" alt="CINEQ Hero" className="rounded-xl w-full h-auto object-cover" />
                 </div>
@@ -238,9 +316,24 @@ export default function Home({ reviews = [], trailers = [], gossips = [], telugu
                     </div>
                 </div>
 
-                <CineqTeluguRow items={telugu} />
-                <CineqOTTRow />
+                {/* ✅ EXACT LAYOUT: Left (Radar + OTT stacked) | Right (Speaks sticky + own scroll) */}
+                <div className="mb-12 lg:flex lg:gap-6">
+                    {/* LEFT: 2/3 width, stack Radar then OTT */}
+                    <div className="w-full lg:w-2/3 space-y-8">
+                        <CineqTeluguRow items={telugu} compact />
+                        <CineqOTTRow compact />
+                    </div>
 
+                    {/* RIGHT: sticky column with bounded height & its own vertical scrollbar */}
+                    <div
+                        className="w-full lg:w-1/3 lg:sticky custom-thin-scroll"
+                        style={{ top: 96, maxHeight: 'calc(100vh - 96px)', overflowY: 'auto' }}
+                    >
+                        <CINEQSpeaks compact />
+                    </div>
+                </div>
+
+                {/* Reviews | Trailers | Gossips */}
                 <section className="mb-16" id="reviews-trailers-gossips">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Reviews */}
@@ -305,24 +398,88 @@ export default function Home({ reviews = [], trailers = [], gossips = [], telugu
                     </div>
                 </section>
 
-               {/* 🔥 CINEQ Specials Section */}
-<section className="max-w-7xl mx-auto px-4 py-12">
-  <h2 className="text-3xl font-extrabold text-center mb-10">
-    🔥 CINEQ Specials
-  </h2>
+                {/* 📺 CINEQ · Must Watch OTT + 🎞️ Retrospect */}
+                <section className="max-w-7xl mx-auto px-4 pt-4 pb-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-    {/* 🏆 Bigg Boss Winners */}
-    <div className="bg-white rounded-2xl shadow-md p-6">
-      <BiggBossWinners />
-    </div>
+                        {/* Must Watch OTT (2/3 width) */}
+                        <div className="lg:col-span-2 flex flex-col">
+                            <h2 className="font-semibold mb-3 text-xl">CINEQ · Must Watch OTT</h2>
+                            <div className="flex-1 bg-white rounded-xl shadow-md p-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                                {!mustWatch.length ? (
+                                    <p className="text-gray-500">No Must Watch titles available right now.</p>
+                                ) : (
+                                    <div className="flex gap-4 pr-4 snap-x snap-mandatory">
+                                        {mustWatch.map((item) => (
+                                            <article
+                                                key={item.id}
+                                                className="min-w-[180px] sm:w-[200px] rounded-2xl border bg-white overflow-hidden hover:shadow-md transition snap-start"
+                                            >
+                                                <div className="relative">
+                                                    <div className="aspect-[2/3] bg-gray-100">
+                                                        <img
+                                                            src={item.poster}
+                                                            alt={item.title}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                    <div className="absolute top-2 right-2">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border bg-black bg-opacity-70 text-white">
+                                                            {item.platform}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3">
+                                                    <h3 className="text-sm font-semibold leading-snug line-clamp-2">
+                                                        {item.title}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-500">{item.language}</p>
+                                                </div>
+                                            </article>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
-    {/* 🎨 Poster Pathshala */}
-    <div className="bg-white rounded-2xl shadow-md p-6">
-      <PosterPathshalaDemo />
-    </div>
-  </div>
-</section>
+                        {/* 🎞️ Retrospect (1/3 width) */}
+                        <div className="flex flex-col">
+                            <h2 className="font-semibold mb-3 text-xl">CINEQ · Retrospect</h2>
+                            <div className="flex-1 bg-white rounded-xl shadow-md p-4 h-[500px] overflow-y-auto custom-thin-scroll">
+                                {!retrospect || !retrospect.length ? (
+                                    <p className="text-gray-500 italic">
+                                        No Retrospect analysis available yet...
+                                    </p>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {retrospect.map((item) => (
+                                            <div key={item.id} className="border-b border-gray-200 pb-3">
+                                                <h3 className="font-semibold text-gray-800 text-sm">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-sm text-gray-700">{item.analysis}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                {/* 🔥 CINEQ Specials */}
+                <section className="max-w-7xl mx-auto px-4 py-4">
+                    <h2 className="text-2xl font-bold text-center mb-6">🔥 CINEQ Specials</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-white rounded-xl shadow-md p-4">
+                            <BiggBossWinners />
+                        </div>
+                        <div className="bg-white rounded-xl shadow-md p-4">
+                            <PosterPathshalaDemo />
+                        </div>
+                    </div>
+                </section>
 
 
                 <footer className="text-center text-gray-500 text-sm py-6 border-t border-gray-200">
@@ -336,6 +493,11 @@ export default function Home({ reviews = [], trailers = [], gossips = [], telugu
         .scrollbar-thin::-webkit-scrollbar { height: 8px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+
+        /* Thin vertical scrollbar for Speaks column and card */
+        .custom-thin-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-thin-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+        .custom-thin-scroll::-webkit-scrollbar-track { background: transparent; }
       `}</style>
         </>
     )

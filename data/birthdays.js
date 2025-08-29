@@ -1,6 +1,6 @@
 // data/birthdays.js
 export const starBirthdays = [
-    { name: "Bharani", dob: "1990-08-23" },
+    { name: "Bharani", dob: "1990-09-02" },
     { name: "Chiranjeevi", dob: "1990-08-22" },
     { name: "Rajinikanth", dob: "1990-12-12" },
     { name: "Kamal Haasan", dob: "1990-11-07" },
