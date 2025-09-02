@@ -4,7 +4,7 @@ import Header from '../components/Header'
 import DisclaimerModal from '../components/DisclaimerModal'
 import { getReviews, getTrailers, getGossips, getMustWatchOTT, getRetrospect } from '../lib/airtable'
 import BiggBossWinners from "../components/BiggBoss";
-import PosterPathshalaDemo from "../components/PosterPathshalaDemo";
+import PosterPathshala from "../components/PosterPathshala";
 import BirthdayBanner from "../components/BirthdayBanner";
 
 /* ------------------------- Utils ------------------------- */
@@ -480,7 +480,8 @@ export default function Home({
                             <BiggBossWinners />
                         </div>
                         <div className="bg-white rounded-xl shadow-md p-4">
-                            <PosterPathshalaDemo />
+                            <PosterPathshala />
+
                         </div>
                     </div>
                 </section>
