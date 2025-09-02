@@ -336,30 +336,21 @@ export default function Home({
                 {/* Reviews | Trailers | Gossips */}
                 <section className="mb-16" id="reviews-trailers-gossips">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
                         {/* Reviews */}
                         <div>
                             <h2 className="text-2xl font-bold mb-4 text-center">🎬 Latest Movie Reviews</h2>
                             <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
                                 {reviews.map((review) => (
-                                    <div
-                                        key={review.slug}
-                                        className="bg-white shadow-md rounded-lg overflow-hidden"
-                                    >
+                                    <div key={review.slug} className="bg-white shadow-md rounded-lg overflow-hidden">
                                         <div className="relative w-full h-[250px] bg-gray-100 flex items-center justify-center">
-                                            <img
-                                                src={review.poster || '/placeholder.jpg'}
-                                                alt={review.title}
-                                                className="object-contain h-full"
-                                            />
+                                            <img src={review.poster || '/placeholder.jpg'} alt={review.title} className="object-contain h-full" />
                                         </div>
                                         <div className="p-3 text-sm">
                                             <h3 className="font-bold mb-1">{review.title}</h3>
-
-                                            {/* ✅ One-line review (full width, not squeezed) */}
                                             {review.onelineReview && (
                                                 <p className="text-gray-800 italic mb-2">“{review.onelineReview}”</p>
                                             )}
-
                                             <p className="text-gray-700 mb-1">🎭 Cast: {review.cast}</p>
                                             <p className="text-green-700 font-semibold mb-1">📝 {review.verdict}</p>
                                             <p className="text-gray-600 mb-1">🎬 Director: {review.director}</p>
@@ -371,10 +362,33 @@ export default function Home({
                             </div>
                         </div>
 
+                        {/* Trailers */}
+                        <div>
+                            <h2 className="text-2xl font-bold mb-4 text-center">🎞️ Watch Latest Trailers</h2>
+                            <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
+                                {trailers.map((trailer, idx) => (
+                                    <div key={idx} className="bg-white shadow-md rounded-lg overflow-hidden">
+                                        <div className="aspect-video">
+                                            <iframe
+                                                src={trailer.url.replace('watch?v=', 'embed/')}
+                                                title={trailer.title}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                className="w-full h-full border-none"
+                                            ></iframe>
+                                        </div>
+                                        <div className="p-3">
+                                            <h3 className="font-bold text-gray-800 text-sm">{trailer.title}</h3>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Gossips */}
                         <div>
                             <h2 className="text-2xl font-bold mb-4 text-center">🧨 Is It True Bhavani !!</h2>
-                            <div className="space-y-4">
+                            <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
                                 {gossips.map((g, idx) => (
                                     <div key={idx} className="bg-yellow-50 border border-yellow-200 p-3 rounded shadow">
                                         <p className="text-sm text-gray-800">{g.content}</p>
@@ -383,8 +397,10 @@ export default function Home({
                                 ))}
                             </div>
                         </div>
+
                     </div>
                 </section>
+
 
                 {/* 📺 CINEQ · Must Watch OTT + 🎞️ Retrospect */}
                 <section className="max-w-7xl mx-auto px-4 pt-4 pb-8">
