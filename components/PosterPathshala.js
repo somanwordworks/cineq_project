@@ -43,6 +43,15 @@ export default function PosterPathshala() {
                             </div>
                             <div className="p-2 text-center w-full">
                                 <h3 className="text-sm font-semibold truncate">{p.title}</h3>
+                                {p.poster && (
+                                    <a
+                                        href={p.poster}
+                                        download={`${p.title.replace(/\s+/g, "_")}.jpg`}
+                                        className="mt-2 inline-block text-xs px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                    >
+                                        ⬇ Download
+                                    </a>
+                                )}
                             </div>
                         </article>
                     ))}
