@@ -2,37 +2,37 @@ import { useEffect, useState } from "react";
 import { starBirthdays } from "../data/birthdays";
 
 const BirthdayBanner = () => {
-  const [todayBirthdays, setTodayBirthdays] = useState([]);
+    const [todayBirthdays, setTodayBirthdays] = useState([]);
+    const [todayKey, setTodayKey] = useState("");
 
-  useEffect(() => {
-    const todayIST = new Date().toLocaleDateString("en-CA", {
-      timeZone: "Asia/Kolkata",
-    }); // YYYY-MM-DD
-    const todayKey = todayIST.slice(5); // MM-DD
+    useEffect(() => {
+        const todayIST = new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata",
+        }); // YYYY-MM-DD
+        const key = todayIST.slice(5); // MM-DD
+        setTodayKey(key);
 
-    const matches = starBirthdays.filter((star) => star.dob === todayKey);
-    setTodayBirthdays(matches);
-  }, []);
+        const matches = starBirthdays.filter(
+            (star) => star.dob && star.dob.slice(5) === key
+        );
 
-  if (todayBirthdays.length === 0) {
+        setTodayBirthdays(matches);
+        console.log("Today:", key, "Matches:", matches);
+    }, []);
+
+    if (todayBirthdays.length === 0) {
+        return <span>🌟 DATA TALKIES - The Newsreel of Tech.</span>;
+    }
+
     return (
-      <div className="bg-yellow-50 text-center py-2 text-gray-700 text-sm">
-        🌟 DATA TALKIES - Your Daily Dose of Cloud, AI, and Data News !
-      </div>
+        <>
+            {todayBirthdays.map((star, idx) => (
+                <span key={idx} className="mx-4">
+                    🎂 Happy Birthday {star.name}!
+                </span>
+            ))}
+        </>
     );
-  }
-
-  return (
-    <div className="bg-yellow-50 text-center py-2 text-gray-700 text-sm whitespace-nowrap overflow-hidden">
-      <marquee>
-        {todayBirthdays.map((star, idx) => (
-          <span key={idx} className="mx-4">
-            🎂 Happy Birthday {star.name}!
-          </span>
-        ))}
-      </marquee>
-    </div>
-  );
 };
 
 export default BirthdayBanner;
