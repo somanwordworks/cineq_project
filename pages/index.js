@@ -1,87 +1,191 @@
-﻿import React, { useEffect, useState } from 'react'
-import Head from 'next/head'
-import Header from '../components/Header'
-import DisclaimerModal from '../components/DisclaimerModal'
-import { getReviews, getTrailers, getGossips, getMustWatchOTT, getRetrospect } from '../lib/airtable'
+﻿import React, { useEffect, useState } from "react";
+import Head from "next/head";
+import Header from "../components/Header";
+// import DisclaimerModal from "../components/DisclaimerModal";
+import {
+    getHeroBlocks,
+    getReviews,
+    getGossips,
+    getTrailers,
+    getMustWatchOTT,
+    getRetrospect,
+    getCINEQSpeaks,
+} from "../lib/airtable";
+import PosterPathshala from "../components/PosterPathshala";
 import BiggBossWinners from "../components/BiggBoss";
-import PosterPathshalaDemo from "../components/PosterPathshalaDemo";
 import BirthdayBanner from "../components/BirthdayBanner";
 
 /* ------------------------- Utils ------------------------- */
 const formatDate = (date) =>
-    new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata',
-    }).format(date).replace(',', '')
+    new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    })
+        .format(date)
+        .replace(",", "");
 
-const TELUGU = 'te'
-const toISO = (d) => d.toISOString().slice(0, 10)
+const TELUGU = "te";
+const toISO = (d) => d.toISOString().slice(0, 10);
 function mapResults(list) {
-    return (list || []).map(m => ({
+    return (list || []).map((m) => ({
         id: m.id,
         title: m.title || m.original_title,
-        releaseDate: m.release_date || 'Coming Soon',
+        releaseDate: m.release_date || "Coming Soon",
         poster: m.poster_path ? `https://image.tmdb.org/t/p/w342${m.poster_path}` : null,
         overview: m.overview,
-    }))
+    }));
 }
 
-/* ------------------------- Server fetch (TMDB) ------------------------- */
+/* ------------------------- Server fetch (TMDB Radar) ------------------------- */
 async function fetchUpcomingTeluguServer() {
-    const v3 = process.env.TMDB_API_KEY
-    const v4 = process.env.TMDB_ACCESS_TOKEN
-    if (!v3 && !v4) return []
+    const v3 = process.env.TMDB_API_KEY;
+    const v4 = process.env.TMDB_ACCESS_TOKEN;
+    if (!v3 && !v4) return [];
 
-    const today = new Date()
-    const in180 = new Date(); in180.setDate(today.getDate() + 180)
+    const today = new Date();
+    const in180 = new Date();
+    in180.setDate(today.getDate() + 180);
 
     const doFetch = async (url) => {
-        const resp = await fetch(url, v4 ? {
-            headers: { Authorization: `Bearer ${v4}`, accept: 'application/json' }
-        } : undefined)
-        if (!resp.ok) return []
-        const data = await resp.json()
-        return mapResults(data.results || [])
-    }
+        const resp = await fetch(
+            url,
+            v4
+                ? { headers: { Authorization: `Bearer ${v4}`, accept: "application/json" } }
+                : undefined
+        );
+        if (!resp.ok) return [];
+        const data = await resp.json();
+        return mapResults(data.results || []);
+    };
 
     const mkDiscover = (opts = {}) => {
-        const url = new URL('https://api.themoviedb.org/3/discover/movie')
-        url.searchParams.set('include_adult', 'false')
-        url.searchParams.set('include_video', 'false')
-        if (opts.withLang !== false) url.searchParams.set('with_original_language', TELUGU)
-        url.searchParams.set('sort_by', opts.sortBy || 'primary_release_date.asc')
+        const url = new URL("https://api.themoviedb.org/3/discover/movie");
+        url.searchParams.set("include_adult", "false");
+        url.searchParams.set("include_video", "false");
+        if (opts.withLang !== false) url.searchParams.set("with_original_language", TELUGU);
+        url.searchParams.set("sort_by", opts.sortBy || "primary_release_date.asc");
         if (opts.withDates !== false) {
-            url.searchParams.set('primary_release_date.gte', toISO(today))
-            url.searchParams.set('primary_release_date.lte', toISO(in180))
+            url.searchParams.set("primary_release_date.gte", toISO(today));
+            url.searchParams.set("primary_release_date.lte", toISO(in180));
         }
-        if (opts.region) url.searchParams.set('region', 'IN')
-        if (opts.releaseType) url.searchParams.set('with_release_type', '2|3')
-        if (!v4 && v3) url.searchParams.set('api_key', v3)
-        return url.toString()
-    }
+        if (opts.region) url.searchParams.set("region", "IN");
+        if (opts.releaseType) url.searchParams.set("with_release_type", "2|3");
+        if (!v4 && v3) url.searchParams.set("api_key", v3);
+        return url.toString();
+    };
 
-    let res = await doFetch(mkDiscover({ region: true, releaseType: true, withDates: true }))
-    if (!res.length) res = await doFetch(mkDiscover({ region: true, withDates: true }))
-    if (!res.length) res = await doFetch(mkDiscover({ withDates: true }))
-    if (!res.length) res = await doFetch(mkDiscover({ withDates: false, sortBy: 'popularity.desc' }))
-    return res
+    let res = await doFetch(mkDiscover({ region: true, releaseType: true, withDates: true }));
+    if (!res.length) res = await doFetch(mkDiscover({ region: true, withDates: true }));
+    if (!res.length) res = await doFetch(mkDiscover({ withDates: true }));
+    if (!res.length) res = await doFetch(mkDiscover({ withDates: false, sortBy: "popularity.desc" }));
+    return res;
 }
 
+/* ------------------------- Data Fetch ------------------------- */
 export async function getServerSideProps() {
-    const [reviews, trailers, gossips, mustWatch, retrospect] = await Promise.all([
+    const [
+        heroBlocks,
+        reviews,
+        gossips,
+        trailers,
+        mustWatch,
+        retrospect,
+        CINEQspeaks,   // ✅ new
+    ] = await Promise.all([
+        getHeroBlocks().catch(() => []),
         getReviews().catch(() => []),
-        getTrailers().catch(() => []),
         getGossips().catch(() => []),
+        getTrailers().catch(() => []),
         getMustWatchOTT().catch(() => []),
-        getRetrospect().catch(() => []),   // ✅ now assigned to retrospect
+        getRetrospect().catch(() => []),
+        getCINEQSpeaks().catch(() => []),   // ✅ call here
     ]);
 
     let telugu = [];
     try {
         telugu = await fetchUpcomingTeluguServer();
-    } catch { }
+    } catch {
+        telugu = [];
+    }
 
-    return { props: { reviews, trailers, gossips, mustWatch, retrospect, telugu } };
+    return {
+        props: { heroBlocks, reviews, gossips, trailers, mustWatch, retrospect, CINEQspeaks, telugu },
+    };
 }
+
+/* ------------------------- Hero Block ------------------------- */
+const isVideoUrl = (u = "") => /\.(mp4|mov|webm|m4v)(\?|$)/i.test(u);
+
+const HeroCarousel = ({ items }) => {
+    const [index, setIndex] = useState(0);
+
+    // Flatten all media from Airtable rows
+    const slides = items.flatMap((item) =>
+        (item.media || []).map((m, idx) => ({
+            id: `${item.id}-${idx}`,
+            url: m,
+            side: item.side,
+            duration: item.duration || 3,
+        }))
+    );
+
+    useEffect(() => {
+        if (!slides.length) return;
+        const current = slides[index];
+        let timer;
+
+        if (isVideoUrl(current.url)) {
+            timer = setTimeout(
+                () => setIndex((p) => (p + 1) % slides.length),
+                (current.duration || 10) * 1000
+            );
+        } else {
+            timer = setTimeout(() => setIndex((p) => (p + 1) % slides.length), 3000);
+        }
+
+        return () => clearTimeout(timer);
+    }, [index, slides]);
+
+    if (!slides.length) {
+        return <div className="w-full h-[500px] rounded-xl bg-black" />;
+    }
+
+    const current = slides[index];
+
+    return (
+        <div className="w-full h-[500px] bg-black flex items-center justify-center rounded-xl overflow-hidden">
+            {isVideoUrl(current.url) ? (
+                <video
+                    key={current.id}
+                    src={current.url}
+                    className="w-full h-full object-contain bg-black"
+                    autoPlay
+                    muted
+                    loop={false}
+                    playsInline
+                    preload="auto"
+                    onCanPlay={() => {
+                        // Start video as soon as it can play
+                        const vid = document.querySelector(`video[key="${current.id}"]`);
+                        if (vid) vid.play().catch(() => { });
+                    }}
+                    onEnded={() => setIndex((p) => (p + 1) % slides.length)}
+                />
+
+            ) : (
+                <img
+                    key={current.id}
+                    src={current.url || "/placeholder.jpg"}
+                    alt="Hero"
+                    className="w-full h-full object-contain bg-black"
+                />
+            )}
+        </div>
+    );
+};
+
 
 
 /* ================== COMPACT VARIANTS (for left/right layout) ================== */
@@ -224,26 +328,8 @@ function CineqOTTRow({ compact = false }) {
     )
 }
 
-
 /* -------- CINEQ Speaks (fills right column; inner scroll) -------- */
-function CINEQSpeaks({ compact = false, maxItems = 50 }) {
-    const [notes, setNotes] = useState([])
-
-    useEffect(() => {
-        let isMounted = true
-        async function fetchSpeaks() {
-            try {
-                const res = await fetch('/api/speaks?ts=' + Date.now())
-                const data = await res.json()
-                if (isMounted) setNotes(Array.isArray(data) ? data : [])
-            } catch (e) {
-                console.error('Failed to load CINEQ Speaks:', e)
-            }
-        }
-        fetchSpeaks()
-        return () => { isMounted = false }
-    }, [])
-
+function CINEQSpeaks({ compact = false, maxItems = 50, notes = [] }) {
     const ordered = [...notes]
         .filter(n => n?.content)
         .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
@@ -255,7 +341,6 @@ function CINEQSpeaks({ compact = false, maxItems = 50 }) {
                 <span role="img" aria-label="mic">🎙️</span> CINEQ Speaks
             </h2>
 
-            {/* Card fills the sticky container; inner content scrolls (no border clipping) */}
             <div className="rounded-2xl border bg-white shadow-sm h-full">
                 <div className="h-full overflow-y-auto custom-thin-scroll">
                     {ordered.length === 0 ? (
@@ -270,7 +355,11 @@ function CINEQSpeaks({ compact = false, maxItems = 50 }) {
                                     <span className="text-sm text-gray-500">— {note.author || 'CINEQ'}</span>
                                     {note.date ? (
                                         <span className="text-xs text-gray-400">
-                                            {new Date(note.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            {new Date(note.date).toLocaleDateString('en-IN', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            })}
                                         </span>
                                     ) : null}
                                 </div>
@@ -285,51 +374,58 @@ function CINEQSpeaks({ compact = false, maxItems = 50 }) {
 
 /* ------------------------- Page ------------------------- */
 export default function Home({
+    heroBlocks = [],
     reviews = [],
-    trailers = [],
     gossips = [],
+    trailers = [],
     mustWatch = [],
-    retrospect = [],   // ✅ added
+    retrospect = [],
+    CINEQspeaks = [],   // ✅ add this
     telugu = [],
 }) {
+
+    const leftBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "left");
+    const rightBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "right");
 
     return (
         <>
             <Head>
                 <title>CINEQ - Honest Movie Reviews</title>
-                <meta name="description" content="CINEQ brings you sharp, clean, and honest movie reviews." />
+                <meta
+                    name="description"
+                    content="CINEQ brings you sharp, clean, and honest movie reviews."
+                />
             </Head>
 
             <Header />
 
             <main className="max-w-7xl mx-auto px-4 py-6 scroll-smooth">
-                {/* Optional: <DisclaimerModal /> */}
-
-                <div className="mb-6">
-                    <img src="/hero-banner.jpg" alt="CINEQ Hero" className="rounded-xl w-full h-auto object-cover" />
+                {/* 🔥 Hero */}
+                <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <HeroCarousel items={leftBlocks} />
+                    <HeroCarousel items={rightBlocks} />
                 </div>
 
-                {/* 🔔 Birthday Banner with marquee */}
-                <div className="w-full overflow-hidden bg-yellow-100 border border-yellow-300 rounded-lg py-2 mb-6">
-                    <div className="animate-marquee whitespace-nowrap text-center text-sm font-medium text-gray-800">
+                {/* 🎉 Birthday Banner */}
+                <div className="w-full overflow-hidden bg-yellow-100 border border-yellow-300 rounded-lg py-2 mb-8">
+                    <div className="whitespace-nowrap text-center text-sm font-medium text-gray-800 animate-marquee">
                         <BirthdayBanner />
                     </div>
                 </div>
 
-                {/* ✅ EXACT LAYOUT: Left (Radar + OTT stacked) | Right (Speaks sticky + own scroll) */}
+
+                {/* 🧭 Radar + OTT (left) / Speaks (right) */}
                 <div className="mb-12 lg:flex lg:gap-6">
-                    {/* LEFT: 2/3 width, stack Radar then OTT */}
                     <div className="w-full lg:w-2/3 space-y-8">
                         <CineqTeluguRow items={telugu} compact />
                         <CineqOTTRow compact />
                     </div>
-
-                    {/* RIGHT: sticky column with bounded height & its own vertical scrollbar */}
                     <div
                         className="w-full lg:w-1/3 lg:sticky custom-thin-scroll"
-                        style={{ top: 96, maxHeight: 'calc(100vh - 96px)', overflowY: 'auto' }}
+                        style={{ top: 96, maxHeight: "calc(100vh - 96px)", overflowY: "auto" }}
                     >
-                        <CINEQSpeaks compact />
+                        <CINEQSpeaks compact notes={CINEQspeaks} />
+
                     </div>
                 </div>
 
@@ -480,7 +576,8 @@ export default function Home({
                             <BiggBossWinners />
                         </div>
                         <div className="bg-white rounded-xl shadow-md p-4">
-                            <PosterPathshalaDemo />
+                            <PosterPathshala />
+
                         </div>
                     </div>
                 </section>
