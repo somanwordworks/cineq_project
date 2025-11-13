@@ -373,6 +373,169 @@ function CINEQSpeaks({ compact = false, maxItems = 50, notes = [] }) {
     )
 }
 
+
+/* -------- 🧨 Dynamic Bhavani Gossips (India-wide) -------- */
+function BhavaniGossips() {
+    const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        fetch("/api/bhavani")
+            .then(r => r.json())
+            .then(d => setItems(d.items || []))
+            .catch(() => { });
+    }, []);
+
+    if (!items.length) return (
+        <p className="text-center text-gray-500">Loading gossips…</p>
+    );
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold mb-4 text-center">🧨 Is It True Bhavani !!</h2>
+
+            <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
+                {items.map((text, idx) => (
+                    <div
+                        key={idx}
+                        className="bg-yellow-50 border border-yellow-200 p-3 rounded shadow"
+                    >
+                        <p className="text-sm text-gray-800">{text}</p>
+
+                        {idx !== items.length - 1 && (
+                            <hr className="border-dotted border-gray-300 mt-3" />
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+
+/* -------- 🔥 CINEQ Buzz (Full News Blocks - Clean, No Images) -------- */
+function CINEQBuzz() {
+    const [buzz, setBuzz] = useState([]);
+    const [details, setDetails] = useState({}); // store summaries for each item
+
+    useEffect(() => {
+        fetch("/api/cineqbuzz")
+            .then((r) => r.json())
+            .then((d) => {
+                setBuzz(d.items || []);
+
+                // Fetch summary for each news link
+                d.items.forEach((item) => {
+                    fetch(`/api/cineqbuzz-detail?url=${encodeURIComponent(item.link)}`)
+                        .then((r) => r.json())
+                        .then((summaryData) =>
+                            setDetails((prev) => ({
+                                ...prev,
+                                [item.link]: summaryData,
+                            }))
+                        );
+                });
+            })
+            .catch(() => { });
+    }, []);
+
+    if (!buzz.length) return null;
+
+    return (
+        <section className="max-w-7xl mx-auto px-4 py-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span>🔥</span> CINEQ Buzz (Live News)
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                {buzz.map((item, idx) => {
+                    const summaryData = details[item.link];
+
+                    return (
+                        <div
+                            key={idx}
+                            className="bg-white rounded-xl shadow-md p-4 border hover:shadow-lg transition"
+                        >
+                            {/* Title */}
+                            <h3 className="font-bold text-lg mb-3 leading-snug">
+                                {item.title}
+                            </h3>
+
+                            {/* Summary */}
+                            <p className="text-gray-700 mb-3 text-sm leading-relaxed">
+                                {summaryData?.summary
+                                    ?.replace(/<[^>]*>/g, "")
+                                    ?.replace(/&nbsp;/g, " ")
+                                    ?.trim() || "Loading news…"}
+                            </p>
+
+                            {/* Source */}
+                            <p className="text-xs text-gray-500 mb-1">
+                                Source: {item.source || "Google News"}
+                            </p>
+
+                            {/* Time */}
+                            {item.published && (
+                                <p className="text-xs text-gray-400">
+                                    {new Date(item.published).toLocaleString("en-IN")}
+                                </p>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </section>
+    );
+}
+
+/* -------- 📢 Ad Scroller (Full-Width Continuous Scroll) -------- */
+function AdScroller() {
+    const ads = [
+        "/ads/header-banner.jpg",
+        "/ads/ad1.png",
+        "/ads/ad2.png",
+        "/ads/ad3.png",
+        "/ads/ad4.png",
+        "/ads/ad5.png"
+    ];
+
+    // Duplicate images for seamless scrolling
+    const allAds = [...ads, ...ads];
+
+    return (
+        <div className="w-full bg-gray-100 border border-gray-300 py-3 overflow-hidden mb-10 rounded-lg">
+            <div className="flex items-center animate-marquee-images">
+                {allAds.map((src, idx) => (
+                    <img
+                        key={idx}
+                        src={src}
+                        alt={`ad-${idx}`}
+                        className="mx-10 h-[70px] w-auto object-contain"
+                    />
+                ))}
+            </div>
+
+            <style jsx>{`
+                @keyframes marquee-images {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        transform: translateX(-50%);
+                    }
+                }
+
+                .animate-marquee-images {
+                    display: flex;
+                    width: max-content;
+                    animation: marquee-images 25s linear infinite;
+                    will-change: transform;
+                }
+            `}</style>
+        </div>
+    );
+}
+
+
 /* ------------------------- Page ------------------------- */
 export default function Home({
     heroBlocks = [],
@@ -413,6 +576,12 @@ export default function Home({
                         <BirthdayBanner />
                     </div>
                 </div>
+
+
+
+                {/* 📢 Ad Banner Scroller */}
+                <AdScroller />
+
 
 
                 {/* 🧭 Radar + OTT (left) / Speaks (right) */}
@@ -482,21 +651,17 @@ export default function Home({
                             </div>
                         </div>
 
-                        {/* Gossips */}
-                        <div>
-                            <h2 className="text-2xl font-bold mb-4 text-center">🧨 Is It True Bhavani !!</h2>
-                            <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
-                                {gossips.map((g, idx) => (
-                                    <div key={idx} className="bg-yellow-50 border border-yellow-200 p-3 rounded shadow">
-                                        <p className="text-sm text-gray-800">{g.content}</p>
-                                        {idx !== gossips.length - 1 && <hr className="border-dotted border-gray-300 mt-3" />}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                       
+                        {/* Gossips (dynamic) */}
+                        <BhavaniGossips />
 
                     </div>
                 </section>
+
+
+                {/* 🔥 CINEQ Buzz (Dynamic) */}
+                <CINEQBuzz />
+
 
 
                 {/* 📺 CINEQ · Must Watch OTT + 🎞️ Retrospect */}

@@ -20,26 +20,29 @@ export default function Header() {
     };
 
     const navItems = [
-        // Temporarily hidden until feature launch
-        // { name: "Hero Stats", path: "/hero-stats" },
+        { name: "YouTube Stats", path: "/youtube-stats" },
+        { name: "Cult Cuts", path: "/cultcuts" },
         { name: "Insights", path: "/insights" },
     ];
 
     return (
         <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md w-full z-50 sticky top-0">
             {/* 🔷 Logo Section */}
-            <div className="relative flex items-center cursor-pointer" onClick={handleLogoClick}>
+            <div
+                className="relative flex items-center cursor-pointer"
+                onClick={handleLogoClick}
+            >
                 <Image
                     src="/cineq_logo.png"
                     alt="CINEQ Logo"
                     width={160}
                     height={50}
                     priority
-                    className={`transition-opacity duration-300 ${loadingHome ? "opacity-60" : "opacity-100"
-                        }`}
+                    className={`transition-opacity duration-300 ${
+                        loadingHome ? "opacity-60" : "opacity-100"
+                    }`}
                 />
 
-                {/* 🎥 Small Loading Camera */}
                 {loadingHome && (
                     <div className="absolute left-[165px] animate-spin-slow">
                         <Camera
@@ -51,15 +54,27 @@ export default function Header() {
                 )}
             </div>
 
+            {/* 🟨 Ad Space (center, responsive) */}
+            <div className="hidden md:flex justify-center items-center w-full max-w-[728px] aspect-[728/90] bg-gray-100 rounded-lg shadow-sm mx-6 overflow-hidden relative">
+                <Image
+                    src="/ads/header-banner.jpg"
+                    alt="Advertisement"
+                    fill
+                    className="object-contain"
+                />
+            </div>
+
+
             {/* 🔹 Navigation Section */}
             <nav className="flex space-x-6 text-gray-700 font-medium">
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
                         <span
-                            className={`cursor-pointer text-lg font-semibold tracking-wide transition-colors duration-200 ${router.pathname === item.path
-                                    ? "text-[#0078D4]" // active
+                            className={`cursor-pointer text-lg font-semibold tracking-wide transition-colors duration-200 ${
+                                router.pathname === item.path
+                                    ? "text-[#0078D4]"
                                     : "hover:text-[#E91E63]"
-                                }`}
+                            }`}
                         >
                             {item.name}
                         </span>
@@ -68,18 +83,18 @@ export default function Header() {
             </nav>
 
             <style jsx>{`
-        .animate-spin-slow {
-          animation: spin 1.2s linear infinite;
-        }
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
+                .animate-spin-slow {
+                    animation: spin 1.2s linear infinite;
+                }
+                @keyframes spin {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+            `}</style>
         </header>
     );
 }

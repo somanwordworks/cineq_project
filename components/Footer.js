@@ -42,8 +42,21 @@ export default function Footer() {
                 <p className="text-xs text-gray-100">
                     © {new Date().getFullYear()}{" "}
                     <span className="font-semibold">CINEQ</span> • Powered by{" "}
-                    <span className="text-[#F9D65C]">Rhino Tribe Group</span>
+                    <span className="text-[#F9D65C]">Rhino Tribe</span>
                 </p>
+
+                <p className="text-xs text-gray-100 mt-1">
+                    <a
+                        href="https://www.rhinotribe.in"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#F9D65C] underline"
+                    >
+                        www.rhinotribe.in
+                    </a>
+                </p>
+
+
             </div>
         </footer>
     );
