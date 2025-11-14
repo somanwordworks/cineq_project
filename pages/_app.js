@@ -5,11 +5,45 @@ import { useState, useEffect } from 'react';
 import Router from 'next/router';
 import CameraLoader from '../components/CameraLoader';
 
+// ✅ Import GA utilities
+import ReactGA from "react-ga4";
+
 export default function App({ Component, pageProps }) {
     const [pageLoading, setPageLoading] = useState(false);
 
+    // --------------------------
+    // 🔥 Google Analytics Setup
+    // --------------------------
     useEffect(() => {
-        // show loader on route start
+        // Initialize GA4
+        ReactGA.initialize("G-Q2HSWGJTDD");
+
+        // Track first page load
+        ReactGA.send({
+            hitType: "pageview",
+            page: window.location.pathname
+        });
+
+        // Track route changes
+        const handleRouteChange = (url) => {
+            ReactGA.send({
+                hitType: "pageview",
+                page: url
+            });
+        };
+
+        Router.events.on("routeChangeComplete", handleRouteChange);
+
+        return () => {
+            Router.events.off("routeChangeComplete", handleRouteChange);
+        };
+    }, []);
+
+
+    // -----------------------------------
+    // 🔄 PAGE LOADER LOGIC (YOUR CODE)
+    // -----------------------------------
+    useEffect(() => {
         const start = () => setPageLoading(true);
         const end = () => setPageLoading(false);
 
@@ -24,25 +58,24 @@ export default function App({ Component, pageProps }) {
         };
     }, []);
 
-    // 🔒 Security block (added without touching your code)
+    // -----------------------------------
+    // 🔒 SECURITY BLOCK (YOUR CODE)
+    // -----------------------------------
     useEffect(() => {
-        // Disable right-click
         const disableContext = (e) => e.preventDefault();
         document.addEventListener("contextmenu", disableContext);
 
-        // Disable text selection
         const disableSelect = (e) => e.preventDefault();
         document.addEventListener("selectstart", disableSelect);
         document.addEventListener("copy", disableSelect);
 
-        // Disable inspect element shortcuts
         const disableKeys = (e) => {
             if (
-                e.keyCode === 123 || // F12
-                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-                (e.ctrlKey && e.shiftKey && e.keyCode === 67) || // Ctrl+Shift+C
-                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
-                (e.ctrlKey && e.keyCode === 85) // Ctrl+U
+                e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                (e.ctrlKey && e.shiftKey && e.keyCode === 67) ||
+                (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
+                (e.ctrlKey && e.keyCode === 85)
             ) {
                 e.preventDefault();
                 return false;
@@ -58,15 +91,13 @@ export default function App({ Component, pageProps }) {
         };
     }, []);
 
+    // -----------------------------------
+    // ✔ FINAL RENDER (Your original UI)
+    // -----------------------------------
     return (
         <>
-            {/* FULL SCREEN CAMERA LOADER */}
             {pageLoading && <CameraLoader />}
-
-            {/* Your Existing Disclaimer Modal */}
             <DisclaimerModal />
-
-            {/* Actual Page */}
             <Component {...pageProps} />
         </>
     );
