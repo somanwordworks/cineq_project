@@ -58,7 +58,7 @@ export default function InsightsPage() {
             <main className="max-w-7xl mx-auto px-4 py-10">
                 {/* Title */}
                 <h1 className="text-4xl font-bold text-center mb-6 text-[#C62828] flex items-center justify-center gap-3">
-                    🎬 CINEQ Insights Dashboard
+                    🎬 CINEQ OTT Insights Dashboard
                 </h1>
 
                 {/* Unified Filters */}

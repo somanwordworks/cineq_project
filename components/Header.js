@@ -22,7 +22,7 @@ export default function Header() {
     const navItems = [
         { name: "YouTube Stats", path: "/youtube-stats" },
         { name: "Cult Cuts", path: "/cultcuts" },
-        { name: "Insights", path: "/insights" },
+        { name: "OTT Insights", path: "/insights" },
     ];
 
     return (
