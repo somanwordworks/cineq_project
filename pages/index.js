@@ -2,6 +2,7 @@
 import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../components/Footer"; // ✅ Added universal footer
+import ServiceUnavailable from "../components/ServiceUnavailable";
 // import DisclaimerModal from "../components/DisclaimerModal";
 import {
     getHeroBlocks,
@@ -11,6 +12,7 @@ import {
     getMustWatchOTT,
     getRetrospect,
     getCINEQSpeaks,
+    withTimeout,   // ⬅️ REQUIRED FIX
 } from "../lib/airtable";
 import PosterPathshala from "../components/PosterPathshala";
 import BiggBossWinners from "../components/BiggBoss";
@@ -84,6 +86,8 @@ async function fetchUpcomingTeluguServer() {
     return res;
 }
 
+
+
 /* ------------------------- Data Fetch ------------------------- */
 export async function getServerSideProps() {
     const [
@@ -93,17 +97,27 @@ export async function getServerSideProps() {
         trailers,
         mustWatch,
         retrospect,
-        CINEQspeaks,   // ✅ new
+        CINEQspeaks,
     ] = await Promise.all([
-        getHeroBlocks().catch(() => []),
-        getReviews().catch(() => []),
-        getGossips().catch(() => []),
-        getTrailers().catch(() => []),
-        getMustWatchOTT().catch(() => []),
-        getRetrospect().catch(() => []),
-        getCINEQSpeaks().catch(() => []),   // ✅ call here
+        withTimeout(getHeroBlocks(), 2000).catch(() => ({ error: true })),
+        withTimeout(getReviews(), 2000).catch(() => ({ error: true })),
+        withTimeout(getGossips(), 2000).catch(() => ({ error: true })),
+        withTimeout(getTrailers(), 2000).catch(() => ({ error: true })),
+        withTimeout(getMustWatchOTT(), 2000).catch(() => ({ error: true })),
+        withTimeout(getRetrospect(), 2000).catch(() => ({ error: true })),
+        withTimeout(getCINEQSpeaks(), 2000).catch(() => ({ error: true })),
     ]);
 
+    const hasError =
+        heroBlocks?.error ||
+        reviews?.error ||
+        gossips?.error ||
+        trailers?.error ||
+        mustWatch?.error ||
+        retrospect?.error ||
+        CINEQspeaks?.error;
+
+    // TMDB section
     let telugu = [];
     try {
         telugu = await fetchUpcomingTeluguServer();
@@ -112,9 +126,20 @@ export async function getServerSideProps() {
     }
 
     return {
-        props: { heroBlocks, reviews, gossips, trailers, mustWatch, retrospect, CINEQspeaks, telugu },
+        props: {
+            heroBlocks,
+            reviews,
+            gossips,
+            trailers,
+            mustWatch,
+            retrospect,
+            CINEQspeaks,
+            telugu,
+            hasError,
+        },
     };
 }
+
 
 /* ------------------------- Hero Block ------------------------- */
 const isVideoUrl = (u = "") => /\.(mp4|mov|webm|m4v)(\?|$)/i.test(u);
@@ -546,7 +571,12 @@ export default function Home({
     retrospect = [],
     CINEQspeaks = [],   // ✅ add this
     telugu = [],
+    hasError,
 }) {
+
+    if (hasError) {
+        return <ServiceUnavailable />;
+    }
 
     const leftBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "left");
     const rightBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "right");
