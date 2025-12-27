@@ -110,14 +110,15 @@ export async function getServerSideProps() {
         withTimeout(getCINEQSpeaks(), 2000).catch(() => ({ error: true })),
     ]);
 
-    const hasError =
+    const hasError = Boolean(
         heroBlocks?.error ||
         reviews?.error ||
         gossips?.error ||
         trailers?.error ||
         mustWatch?.error ||
         retrospect?.error ||
-        CINEQspeaks?.error;
+        CINEQspeaks?.error
+    );
 
     // TMDB section
     let telugu = [];

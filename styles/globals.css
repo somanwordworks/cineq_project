@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🔒 Disable text selection globally (added as requested) */
+/* Disable text selection globally */
 * {
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -10,8 +10,7 @@
     -ms-user-select: none !important;
 }
 
-<<<<<<< HEAD
-/* ⚡ Added for CINEQ Legal Modal Animation */
+/* Added for CINEQ Legal Modal Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -26,11 +25,11 @@
 
 .animate-fadeIn {
     animation: fadeIn 0.25s ease-out;
-=======
+}
+
 @font-face {
-    font-family: 'BankGothicLtBTLight';
-    src: url('/font/BankGothicLtBTLight.ttf') format('truetype');
+    font-family: "BankGothicLtBTLight";
+    src: url("/font/BankGothicLtBTLight.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
->>>>>>> e300b02 (directors tree)
 }
