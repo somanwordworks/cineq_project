@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Camera } from "lucide-react"; // lightweight icon
+import { Camera } from "lucide-react";
 
 export default function Header() {
     const router = useRouter();
@@ -12,38 +12,30 @@ export default function Header() {
         e.preventDefault();
         setLoadingHome(true);
 
-        // simulate short delay for animation
         setTimeout(() => {
             setLoadingHome(false);
             router.push("/");
         }, 1200);
     };
 
+    // ✅ CLEAN, SINGLE navItems ARRAY (no merge junk)
     const navItems = [
- HEAD
         { name: "YouTube Stats", path: "/youtube-stats" },
-        { name: "Cult Cuts", path: "/cultcuts" },
+
+        {
+            name: "Directors Universe",
+            submenu: [
+                { name: "Cult Cuts", path: "/cultcuts" },
+                { name: "Director Lineage", path: "/directors" },
+            ],
+        },
+
         { name: "OTT Insights", path: "/insights" },
     ];
 
-  { name: "YouTube Stats", path: "/youtube-stats" },
-
-  {
-    name: "Directors Universe",
-    submenu: [
-      { name: "Cult Cuts", path: "/cultcuts" },
-      { name: "Director Lineage", path: "/directors" }
-    ]
-  },
-
-  { name: "Insights", path: "/insights" },
-];
-
- e300b02 (directors tree)
-
     return (
         <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md w-full z-50 sticky top-0">
-            {/* 🔷 Logo Section */}
+            {/* Logo */}
             <div
                 className="relative flex items-center cursor-pointer"
                 onClick={handleLogoClick}
@@ -54,9 +46,8 @@ export default function Header() {
                     width={160}
                     height={50}
                     priority
-                    className={`transition-opacity duration-300 ${
-                        loadingHome ? "opacity-60" : "opacity-100"
-                    }`}
+                    className={`transition-opacity duration-300 ${loadingHome ? "opacity-60" : "opacity-100"
+                        }`}
                 />
 
                 {loadingHome && (
@@ -64,14 +55,14 @@ export default function Header() {
                         <Camera
                             size={20}
                             strokeWidth={2.5}
-                            className="text-[#C62828] drop-shadow-sm"
+                            className="text-[#C62828]"
                         />
                     </div>
                 )}
             </div>
 
-            {/* 🟨 Ad Space (center, responsive) */}
-            <div className="hidden md:flex justify-center items-center w-full max-w-[728px] aspect-[728/90] bg-gray-100 rounded-lg shadow-sm mx-6 overflow-hidden relative">
+            {/* Center Ad */}
+            <div className="hidden md:flex justify-center items-center w-full max-w-[728px] aspect-[728/90] bg-gray-100 rounded-lg mx-6 overflow-hidden relative">
                 <Image
                     src="/ads/header-banner.jpg"
                     alt="Advertisement"
@@ -80,18 +71,14 @@ export default function Header() {
                 />
             </div>
 
-
-            {/* 🔹 Navigation Section */}
+            {/* Navigation */}
             <nav className="flex space-x-6 text-gray-700 font-medium">
-
                 {navItems.map((item) => (
                     <div key={item.name} className="relative group">
-
-                        {/* If NO submenu → normal link */}
                         {!item.submenu && (
                             <Link href={item.path}>
                                 <span
-                                    className={`cursor-pointer text-lg font-semibold tracking-wide transition-colors duration-200 ${router.pathname === item.path
+                                    className={`cursor-pointer text-lg font-semibold transition-colors ${router.pathname === item.path
                                             ? "text-[#0078D4]"
                                             : "hover:text-[#E91E63]"
                                         }`}
@@ -101,23 +88,16 @@ export default function Header() {
                             </Link>
                         )}
 
-                        {/* If submenu → Dropdown Parent */}
                         {item.submenu && (
                             <>
-                                <span
-                                    className="cursor-pointer text-lg font-semibold tracking-wide hover:text-[#E91E63] transition-colors duration-200"
-                                >
+                                <span className="cursor-pointer text-lg font-semibold hover:text-[#E91E63]">
                                     {item.name} ▾
                                 </span>
 
-                                {/* Dropdown Menu */}
-                                <div
-                                    className="absolute left-0 top-full bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50 py-2 w-48"
-
-                                >
+                                <div className="absolute left-0 top-full bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50 py-2 w-48">
                                     {item.submenu.map((sub) => (
                                         <Link key={sub.name} href={sub.path}>
-                                            <div className="px-4 py-2 hover:bg-gray-100 text-gray-800 cursor-pointer">
+                                            <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                                 {sub.name}
                                             </div>
                                         </Link>
@@ -125,12 +105,9 @@ export default function Header() {
                                 </div>
                             </>
                         )}
-
                     </div>
                 ))}
-
             </nav>
-
 
             <style jsx>{`
                 .animate-spin-slow {
