@@ -10,6 +10,7 @@
     -ms-user-select: none !important;
 }
 
+<<<<<<< HEAD
 /* ⚡ Added for CINEQ Legal Modal Animation */
 @keyframes fadeIn {
     from {
@@ -25,4 +26,11 @@
 
 .animate-fadeIn {
     animation: fadeIn 0.25s ease-out;
+=======
+@font-face {
+    font-family: 'BankGothicLtBTLight';
+    src: url('/font/BankGothicLtBTLight.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+>>>>>>> e300b02 (directors tree)
 }

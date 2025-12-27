@@ -20,10 +20,26 @@ export default function Header() {
     };
 
     const navItems = [
+ HEAD
         { name: "YouTube Stats", path: "/youtube-stats" },
         { name: "Cult Cuts", path: "/cultcuts" },
         { name: "OTT Insights", path: "/insights" },
     ];
+
+  { name: "YouTube Stats", path: "/youtube-stats" },
+
+  {
+    name: "Directors Universe",
+    submenu: [
+      { name: "Cult Cuts", path: "/cultcuts" },
+      { name: "Director Lineage", path: "/directors" }
+    ]
+  },
+
+  { name: "Insights", path: "/insights" },
+];
+
+ e300b02 (directors tree)
 
     return (
         <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md w-full z-50 sticky top-0">
@@ -67,20 +83,54 @@ export default function Header() {
 
             {/* 🔹 Navigation Section */}
             <nav className="flex space-x-6 text-gray-700 font-medium">
+
                 {navItems.map((item) => (
-                    <Link key={item.path} href={item.path}>
-                        <span
-                            className={`cursor-pointer text-lg font-semibold tracking-wide transition-colors duration-200 ${
-                                router.pathname === item.path
-                                    ? "text-[#0078D4]"
-                                    : "hover:text-[#E91E63]"
-                            }`}
-                        >
-                            {item.name}
-                        </span>
-                    </Link>
+                    <div key={item.name} className="relative group">
+
+                        {/* If NO submenu → normal link */}
+                        {!item.submenu && (
+                            <Link href={item.path}>
+                                <span
+                                    className={`cursor-pointer text-lg font-semibold tracking-wide transition-colors duration-200 ${router.pathname === item.path
+                                            ? "text-[#0078D4]"
+                                            : "hover:text-[#E91E63]"
+                                        }`}
+                                >
+                                    {item.name}
+                                </span>
+                            </Link>
+                        )}
+
+                        {/* If submenu → Dropdown Parent */}
+                        {item.submenu && (
+                            <>
+                                <span
+                                    className="cursor-pointer text-lg font-semibold tracking-wide hover:text-[#E91E63] transition-colors duration-200"
+                                >
+                                    {item.name} ▾
+                                </span>
+
+                                {/* Dropdown Menu */}
+                                <div
+                                    className="absolute left-0 top-full bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50 py-2 w-48"
+
+                                >
+                                    {item.submenu.map((sub) => (
+                                        <Link key={sub.name} href={sub.path}>
+                                            <div className="px-4 py-2 hover:bg-gray-100 text-gray-800 cursor-pointer">
+                                                {sub.name}
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+
+                    </div>
                 ))}
+
             </nav>
+
 
             <style jsx>{`
                 .animate-spin-slow {

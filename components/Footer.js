@@ -12,6 +12,7 @@ export default function Footer() {
                 {/* Gold accent line */}
                 <div className="h-1 bg-[#E6B852]" />
 
+<<<<<<< HEAD
                 <div className="max-w-7xl mx-auto px-6 py-10 text-center">
                     {/* Logo + Title */}
                     <div className="flex flex-col items-center justify-center mb-3">
@@ -52,6 +53,50 @@ export default function Footer() {
                     </p>
 
                     <p className="text-xs text-gray-100 mt-1">
+=======
+            <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+
+                {/* LEFT COLUMN — DNV ARC at bottom */}
+                <div className="flex flex-col justify-between">
+                    {/* Empty space at the top */}
+                    <div></div>
+
+                    {/* DNV ARC Signature at bottom-left */}
+                    <div
+                        className="opacity-80 text-white"
+                        style={{
+                            fontFamily: "BankGothicLtBTLight",
+                            letterSpacing: "0.10em",
+                            textTransform: "uppercase",
+                        }}
+                    >
+                        A DNV ARC DIGITAL EXPERIENCE
+                    </div>
+                </div>
+
+                {/* CENTER COLUMN – Logo + Tagline */}
+                <div className="flex flex-col items-center text-center">
+                    <Image
+                        src="/cineq-logo.png"
+                        alt="CINEQ Logo"
+                        width={140}
+                        height={140}
+                        className="mb-3"
+                    />
+
+                    <p className="text-[#F9D65C] text-sm italic mt-1">
+                        Lights. Camera. Data.
+                    </p>
+
+                    <div className="w-24 h-[2px] bg-[#E6B852] mx-auto mt-2"></div>
+                </div>
+
+                {/* RIGHT COLUMN – Contact + Copyright */}
+                <div className="text-right text-sm text-gray-100">
+
+                    <p className="mb-4">
+                        For collaborations, media partnerships, or queries:<br />
+>>>>>>> e300b02 (directors tree)
                         <a
                             href="https://www.rhinotribe.in"
                             target="_blank"
@@ -62,6 +107,7 @@ export default function Footer() {
                         </a>
                     </p>
 
+<<<<<<< HEAD
                     {/* ⭐ NEW — Terms & Privacy Link (RIGHT SIDE) */}
                     <div className="mt-4 flex justify-end">
                         <span
@@ -78,5 +124,29 @@ export default function Footer() {
             {/* ⭐ Legal Modal */}
             <LegalModal open={open} setOpen={setOpen} />
         </>
+=======
+                    <p className="text-xs text-gray-100">
+                        © {new Date().getFullYear()} <span className="font-semibold">CINEQ</span> • Powered by{" "}
+                        <span className="text-[#F9D65C]">Rhino Tribe</span>
+                    </p>
+
+                    <p className="text-xs text-gray-100 mt-1">
+                        <a
+                            href="https://www.rhinotribe.in"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#F9D65C] underline"
+                        >
+                            www.rhinotribe.in
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+
+
+
+>>>>>>> e300b02 (directors tree)
     );
 }

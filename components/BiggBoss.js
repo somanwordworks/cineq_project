@@ -2,7 +2,9 @@ import React, { useState } from "react";
 
 export default function BiggBossWinners() {
     const winners = [
-        /* ---------------- TELUGU ---------------- */
+        
+
+        /* ================= TELUGU ================= */
         { season: "Season 1", year: "2017", language: "Telugu", winner: "Siva Balaji", runnerUp: "Aadarsh Balakrishna", host: "N. T. Rama Rao Jr." },
         { season: "Season 2", year: "2018", language: "Telugu", winner: "Kaushal Manda", runnerUp: "Geetha Madhuri", host: "Nani" },
         { season: "Season 3", year: "2019", language: "Telugu", winner: "Rahul Sipligunj", runnerUp: "Sreemukhi", host: "Nagarjuna" },
@@ -11,35 +13,60 @@ export default function BiggBossWinners() {
         { season: "Season 6", year: "2022", language: "Telugu", winner: "Revanth", runnerUp: "Srihan", host: "Nagarjuna" },
         { season: "Season 7", year: "2023", language: "Telugu", winner: "Shivaji", runnerUp: "Amardeep Chowdary", host: "Nagarjuna" },
         { season: "Season 8", year: "2024", language: "Telugu", winner: "Nikhil Maliyakkal", runnerUp: "Priyanka Jain", host: "Nagarjuna" },
+        { season: "Season 9", year: "2025", language: "Telugu", winner: "Kalyan Padala", runnerUp: "Thanua Puttiswamy", host: "Nagarjuna" },
 
-        /* ---------------- HINDI ---------------- */
+        /* ================= HINDI ================= */
         { season: "Season 1", year: "2006", language: "Hindi", winner: "Rahul Roy", runnerUp: "Carol Gracias", host: "Arshad Warsi" },
         { season: "Season 2", year: "2008", language: "Hindi", winner: "Ashutosh Kaushik", runnerUp: "Raja Chaudhary", host: "Shilpa Shetty" },
         { season: "Season 3", year: "2009", language: "Hindi", winner: "Vindu Dara Singh", runnerUp: "Pravesh Rana", host: "Amitabh Bachchan" },
         { season: "Season 4", year: "2010", language: "Hindi", winner: "Shweta Tiwari", runnerUp: "The Great Khali", host: "Salman Khan" },
+        { season: "Season 5", year: "2011", language: "Hindi", winner: "Juhi Parmar", runnerUp: "Mahek Chahal", host: "Salman Khan" },
+        { season: "Season 6", year: "2012", language: "Hindi", winner: "Urvashi Dholakia", runnerUp: "Imam Siddique", host: "Salman Khan" },
+        { season: "Season 7", year: "2013", language: "Hindi", winner: "Gauahar Khan", runnerUp: "Tanishaa Mukerji", host: "Salman Khan" },
+        { season: "Season 8", year: "2014", language: "Hindi", winner: "Gautam Gulati", runnerUp: "Karishma Tanna", host: "Salman Khan" },
+        { season: "Season 9", year: "2015", language: "Hindi", winner: "Prince Narula", runnerUp: "Rishabh Sinha", host: "Salman Khan" },
+        { season: "Season 10", year: "2016", language: "Hindi", winner: "Manveer Gurjar", runnerUp: "Bani J", host: "Salman Khan" },
+        { season: "Season 11", year: "2017", language: "Hindi", winner: "Shilpa Shinde", runnerUp: "Hina Khan", host: "Salman Khan" },
+        { season: "Season 12", year: "2018", language: "Hindi", winner: "Dipika Kakar", runnerUp: "Sreesanth", host: "Salman Khan" },
         { season: "Season 13", year: "2020", language: "Hindi", winner: "Sidharth Shukla", runnerUp: "Asim Riaz", host: "Salman Khan" },
+        { season: "Season 14", year: "2021", language: "Hindi", winner: "Rubina Dilaik", runnerUp: "Rahil Jafri", host: "Salman Khan" },
+        { season: "Season 15", year: "2022", language: "Hindi", winner: "Tejasswi Prakash", runnerUp: "Pratik Sehajpal", host: "Salman Khan" },
+        { season: "Season 16", year: "2023", language: "Hindi", winner: "MC Stan", runnerUp: "Shiv Thakare", host: "Salman Khan" },
         { season: "Season 17", year: "2024", language: "Hindi", winner: "Munawar Faruqui", runnerUp: "Abhishek Kumar", host: "Salman Khan" },
 
-        /* ---------------- TAMIL ---------------- */
+        /* ================= TAMIL ================= */
         { season: "Season 1", year: "2017", language: "Tamil", winner: "Arav", runnerUp: "Snehan", host: "Kamal Haasan" },
+        { season: "Season 2", year: "2018", language: "Tamil", winner: "Riythvika", runnerUp: "Aishwarya Dutta", host: "Kamal Haasan" },
+        { season: "Season 3", year: "2019", language: "Tamil", winner: "Mugen Rao", runnerUp: "Sandy Master", host: "Kamal Haasan" },
+        { season: "Season 4", year: "2021", language: "Tamil", winner: "Aari Arjuna", runnerUp: "Bala", host: "Kamal Haasan" },
+        { season: "Season 5", year: "2022", language: "Tamil", winner: "Raju Jeyamohan", runnerUp: "Priyanka Deshpande", host: "Kamal Haasan" },
         { season: "Season 6", year: "2023", language: "Tamil", winner: "Azeem", runnerUp: "Vikraman", host: "Kamal Haasan" },
 
-        /* ---------------- KANNADA ---------------- */
+        /* ================= KANNADA ================= */
         { season: "Season 1", year: "2013", language: "Kannada", winner: "Vijay Raghavendra", runnerUp: "Arun Sagar", host: "Sudeep" },
+        { season: "Season 2", year: "2014", language: "Kannada", winner: "Akul Balaji", runnerUp: "Deepika Kamaiah", host: "Sudeep" },
+        { season: "Season 3", year: "2015", language: "Kannada", winner: "Shruti", runnerUp: "Chandan Kumar", host: "Sudeep" },
         { season: "Season 9", year: "2022", language: "Kannada", winner: "Rupesh Rajanna", runnerUp: "Roopesh Shetty", host: "Sudeep" },
 
-        /* ---------------- MALAYALAM ---------------- */
+        /* ================= MALAYALAM ================= */
         { season: "Season 1", year: "2018", language: "Malayalam", winner: "Sabumon Abdusamad", runnerUp: "Pearle Maaney", host: "Mohanlal" },
+        { season: "Season 2", year: "2020", language: "Malayalam", winner: "Dilip", runnerUp: "Reshma Rajan", host: "Mohanlal" },
+        { season: "Season 3", year: "2021", language: "Malayalam", winner: "Manikuttan", runnerUp: "Sai Vishnu", host: "Mohanlal" },
+        { season: "Season 4", year: "2022", language: "Malayalam", winner: "Dilksha Prasad", runnerUp: "Blesslee", host: "Mohanlal" },
         { season: "Season 5", year: "2023", language: "Malayalam", winner: "Reneesha Rahiman", runnerUp: "Shiju AR", host: "Mohanlal" },
 
-        /* ---------------- MARATHI ---------------- */
+        /* ================= MARATHI ================= */
         { season: "Season 1", year: "2018", language: "Marathi", winner: "Megha Dhade", runnerUp: "Pushkar Jog", host: "Mahesh Manjrekar" },
+        { season: "Season 2", year: "2019", language: "Marathi", winner: "Shiv Thakare", runnerUp: "Neha Shitole", host: "Mahesh Manjrekar" },
+        { season: "Season 3", year: "2021", language: "Marathi", winner: "Vishal Nikam", runnerUp: "Jay Dudhane", host: "Mahesh Manjrekar" },
         { season: "Season 4", year: "2022", language: "Marathi", winner: "Akshay Kelkar", runnerUp: "Apurva Nemlekar", host: "Mahesh Manjrekar" },
 
-        /* ---------------- BENGALI ---------------- */
+        /* ================= BENGALI ================= */
         { season: "Season 1", year: "2013", language: "Bengali", winner: "Ananya Chatterjee", runnerUp: "Joyjit Banerjee", host: "Mithun Chakraborty" },
-        { season: "Season 2", year: "2016", language: "Bengali", winner: "Joey Debroy", runnerUp: "Priya Paul", host: "Mithun Chakraborty" }
+        { season: "Season 2", year: "2016", language: "Bengali", winner: "Joey Debroy", runnerUp: "Priya Paul", host: "Mithun Chakraborty" },
+        { season: "Season 3", year: "2021", language: "Bengali", winner: "Aryan Ghoshal", runnerUp: "Riya Mukherjee", host: "Jeet" }
     ];
+
 
     const [selectedLang, setSelectedLang] = useState("All");
 

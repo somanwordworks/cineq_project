@@ -2,7 +2,6 @@
 import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../components/Footer"; // ✅ Added universal footer
-import ServiceUnavailable from "../components/ServiceUnavailable";
 // import DisclaimerModal from "../components/DisclaimerModal";
 import {
     getHeroBlocks,
@@ -12,13 +11,10 @@ import {
     getMustWatchOTT,
     getRetrospect,
     getCINEQSpeaks,
-    withTimeout,   // ⬅️ REQUIRED FIX
 } from "../lib/airtable";
 import PosterPathshala from "../components/PosterPathshala";
 import BiggBossWinners from "../components/BiggBoss";
 import BirthdayBanner from "../components/BirthdayBanner";
-import YoutubeFlash from "@/components/YoutubeFlash";
-
 
 /* ------------------------- Utils ------------------------- */
 const formatDate = (date) =>
@@ -88,8 +84,6 @@ async function fetchUpcomingTeluguServer() {
     return res;
 }
 
-
-
 /* ------------------------- Data Fetch ------------------------- */
 export async function getServerSideProps() {
     const [
@@ -99,27 +93,17 @@ export async function getServerSideProps() {
         trailers,
         mustWatch,
         retrospect,
-        CINEQspeaks,
+        CINEQspeaks,   // ✅ new
     ] = await Promise.all([
-        withTimeout(getHeroBlocks(), 2000).catch(() => ({ error: true })),
-        withTimeout(getReviews(), 2000).catch(() => ({ error: true })),
-        withTimeout(getGossips(), 2000).catch(() => ({ error: true })),
-        withTimeout(getTrailers(), 2000).catch(() => ({ error: true })),
-        withTimeout(getMustWatchOTT(), 2000).catch(() => ({ error: true })),
-        withTimeout(getRetrospect(), 2000).catch(() => ({ error: true })),
-        withTimeout(getCINEQSpeaks(), 2000).catch(() => ({ error: true })),
+        getHeroBlocks().catch(() => []),
+        getReviews().catch(() => []),
+        getGossips().catch(() => []),
+        getTrailers().catch(() => []),
+        getMustWatchOTT().catch(() => []),
+        getRetrospect().catch(() => []),
+        getCINEQSpeaks().catch(() => []),   // ✅ call here
     ]);
 
-    const hasError =
-        heroBlocks?.error ||
-        reviews?.error ||
-        gossips?.error ||
-        trailers?.error ||
-        mustWatch?.error ||
-        retrospect?.error ||
-        CINEQspeaks?.error;
-
-    // TMDB section
     let telugu = [];
     try {
         telugu = await fetchUpcomingTeluguServer();
@@ -128,20 +112,9 @@ export async function getServerSideProps() {
     }
 
     return {
-        props: {
-            heroBlocks,
-            reviews,
-            gossips,
-            trailers,
-            mustWatch,
-            retrospect,
-            CINEQspeaks,
-            telugu,
-            hasError,
-        },
+        props: { heroBlocks, reviews, gossips, trailers, mustWatch, retrospect, CINEQspeaks, telugu },
     };
 }
-
 
 /* ------------------------- Hero Block ------------------------- */
 const isVideoUrl = (u = "") => /\.(mp4|mov|webm|m4v)(\?|$)/i.test(u);
@@ -573,12 +546,7 @@ export default function Home({
     retrospect = [],
     CINEQspeaks = [],   // ✅ add this
     telugu = [],
-    hasError,
 }) {
-
-    if (hasError) {
-        return <ServiceUnavailable />;
-    }
 
     const leftBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "left");
     const rightBlocks = heroBlocks.filter((b) => (b.side || "").toLowerCase() === "right");
@@ -660,10 +628,28 @@ export default function Home({
                             </div>
                         </div>
 
-                        {/* youtube crds replace trailer */}
-
-                        <YoutubeFlash />
-
+                        {/* Trailers */}
+                        <div>
+                            <h2 className="text-2xl font-bold mb-4 text-center">🎞️ Watch Latest Trailers</h2>
+                            <div className="h-[600px] overflow-y-auto pr-2 space-y-4">
+                                {trailers.map((trailer, idx) => (
+                                    <div key={idx} className="bg-white shadow-md rounded-lg overflow-hidden">
+                                        <div className="aspect-video">
+                                            <iframe
+                                                src={trailer.url.replace('watch?v=', 'embed/')}
+                                                title={trailer.title}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                className="w-full h-full border-none"
+                                            ></iframe>
+                                        </div>
+                                        <div className="p-3">
+                                            <h3 className="font-bold text-gray-800 text-sm">{trailer.title}</h3>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
                        
                         {/* Gossips (dynamic) */}

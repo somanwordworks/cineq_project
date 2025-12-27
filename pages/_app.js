@@ -62,34 +62,55 @@ export default function App({ Component, pageProps }) {
     // 🔒 SECURITY BLOCK (YOUR CODE)
     // -----------------------------------
     useEffect(() => {
-        const disableContext = (e) => e.preventDefault();
-        document.addEventListener("contextmenu", disableContext);
+    const disableContext = (e) => e.preventDefault();
+    document.addEventListener("contextmenu", disableContext); // ✅ FIXED
 
-        const disableSelect = (e) => e.preventDefault();
-        document.addEventListener("selectstart", disableSelect);
-        document.addEventListener("copy", disableSelect);
+    const disableSelect = (e) => e.preventDefault();
+    document.addEventListener("selectstart", disableSelect);
+    document.addEventListener("copy", disableSelect);
 
-        const disableKeys = (e) => {
-            if (
-                e.keyCode === 123 ||
-                (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-                (e.ctrlKey && e.shiftKey && e.keyCode === 67) ||
-                (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
-                (e.ctrlKey && e.keyCode === 85)
-            ) {
-                e.preventDefault();
-                return false;
+    const disableKeys = (e) => {
+        if (
+            e.keyCode === 123 ||
+            (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+            (e.ctrlKey && e.shiftKey && e.keyCode === 67) ||
+            (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
+            (e.ctrlKey && e.keyCode === 85)
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    };
+    document.addEventListener("keydown", disableKeys);
+
+    return () => {
+        document.removeEventListener("contextmenu", disableContext);
+        document.removeEventListener("selectstart", disableSelect);
+        document.removeEventListener("copy", disableSelect);
+        document.removeEventListener("keydown", disableKeys);
+    };
+}, []);
+
+
+
+    // ⭐ ADDED FOR TWITTER EMBEDS (Legal + safe)
+    // ----------------------------------------------
+    // Loads https://platform.twitter.com/widgets.js
+    // Only needed if we use fallback <EmbeddedTimeline>
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            if (!window.twttr) {
+                const s = document.createElement("script");
+                s.src = "https://platform.twitter.com/widgets.js";
+                s.async = true;
+                document.body.appendChild(s);
+            } else {
+                window.twttr.widgets.load();
             }
-        };
-        document.addEventListener("keydown", disableKeys);
-
-        return () => {
-            document.removeEventListener("contextmenu", disableContext);
-            document.removeEventListener("selectstart", disableSelect);
-            document.removeEventListener("copy", disableSelect);
-            document.removeEventListener("keydown", disableKeys);
-        };
+        }
     }, []);
+    // ----------------------------------------------
+
 
     // -----------------------------------
     // ✔ FINAL RENDER (Your original UI)
