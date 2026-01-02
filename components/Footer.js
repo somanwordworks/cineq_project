@@ -52,26 +52,26 @@ export default function Footer() {
                             For collaborations, media partnerships, or queries:
                             <br />
                             <a
-                                href="mailto:contact@rhinotribe.in"
+                                href="mailto:contact@dnvarc.com"
                                 className="text-[#F9D65C] hover:text-[#E6B852] transition-colors"
                             >
-                                contact@rhinotribe.in
+                                contact@dnvarc.com
                             </a>
                         </p>
 
                         <p className="text-xs mb-4">
                             © {new Date().getFullYear()}{" "}
                             <span className="font-semibold">CINEQ</span> • Powered by{" "}
-                            <span className="text-[#F9D65C]">Rhino Tribe</span>
+                            <span className="text-[#F9D65C]">DNV ARC</span>
                         </p>
 
                         <a
-                            href="https://www.rhinotribe.in"
+                            href="https://www.DNVARC.COM"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[#F9D65C] underline text-xs"
                         >
-                            www.rhinotribe.in
+                            www.dnvarc.com
                         </a>
 
                         {/* Terms & Privacy */}
