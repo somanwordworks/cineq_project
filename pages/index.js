@@ -764,26 +764,50 @@ export default function Home({
                 </section>
 
 
-                <footer className="text-center text-gray-500 text-sm py-6 border-t border-gray-200">
-                    © 2025 CINEQ. All rights reserved.
-                </footer>
             </main>
 
-            {/* ✅ Universal Footer Added */}
+            {/* ✅ Universal Footer */}
             <Footer />
 
             <style jsx>{`
-        .animate-marquee { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
-        .scrollbar-thin::-webkit-scrollbar { height: 8px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+  .animate-marquee {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+  }
 
-        /* Thin vertical scrollbar for Speaks column and card */
-        .custom-thin-scroll::-webkit-scrollbar { width: 8px; }
-        .custom-thin-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
-        .custom-thin-scroll::-webkit-scrollbar-track { background: transparent; }
-      `}</style>
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 9999px;
+  }
+
+  /* Thin vertical scrollbar */
+  .custom-thin-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-thin-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 9999px;
+  }
+
+  .custom-thin-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+`}</style>
         </>
-    )
+    );
 }

@@ -76,13 +76,21 @@ export default function Footer() {
 
                         {/* Terms & Privacy */}
                         <div className="mt-4 flex justify-end">
-                            <span
+                            <button
                                 onClick={() => setOpen(true)}
-                                className="cursor-pointer text-[10px] text-gray-200 hover:text-[#F9D65C] transition"
+                                className="
+            text-xs
+            font-medium
+            underline
+            text-[#F9D65C]
+            hover:text-white
+            transition
+        "
                             >
                                 Terms & Privacy
-                            </span>
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </footer>

@@ -156,7 +156,7 @@ export default function LegalModal({ open, setOpen }) {
                     {/* ——————— CONTACT ——————— */}
                     <h3 className="text-base text-yellow-400 font-semibold">5. Contact</h3>
                     <p>
-                        contact@rhinotribe.in<br />
+                        contact@dnvarc.com<br />
                         
                     </p>
                 </div>
