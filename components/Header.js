@@ -3,11 +3,20 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Camera } from "lucide-react";
+import { starBirthdays } from "../data/birthdays";
+
 
 export default function Header() {
     const router = useRouter();
     const [loadingHome, setLoadingHome] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const today = new Date();
+    const todayStr = today.toISOString().slice(5, 10);
+
+    const todayBirthdays = starBirthdays.filter(
+        (b) => b.dob.slice(5, 10) === todayStr
+    );
 
     const handleLogoClick = (e) => {
         e.preventDefault();
@@ -17,6 +26,8 @@ export default function Header() {
             router.push("/");
         }, 1200);
     };
+
+
 
     const navItems = [
         { name: "YouTube Stats", path: "/youtube-stats" },
@@ -38,7 +49,7 @@ export default function Header() {
             >
                 <div className="flex justify-between items-center px-8 py-0 h-16">
 
-                    {/* ── Logo — inline SVG, white wordmark on dark bg ── */}
+                    {/* ── Logo ── */}
                     <div
                         className="relative flex items-center cursor-pointer flex-shrink-0"
                         onClick={handleLogoClick}
@@ -51,18 +62,18 @@ export default function Header() {
                             width="160"
                             className={`transition-opacity duration-300 ${loadingHome ? "opacity-50" : "opacity-100"}`}
                         >
-                            <rect x="0" y="0" width="20" height="80" fill="#C62828"/>
-                            <rect x="0" y="2"  width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="13" width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="24" width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="35" width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="46" width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="57" width="20" height="7" fill="#E6B852"/>
-                            <rect x="0" y="68" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="0" width="20" height="80" fill="#C62828" />
+                            <rect x="0" y="2" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="13" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="24" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="35" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="46" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="57" width="20" height="7" fill="#E6B852" />
+                            <rect x="0" y="68" width="20" height="7" fill="#E6B852" />
                             <text x="30" y="57"
                                 fontFamily="'Bebas Neue', Impact, 'Arial Black', sans-serif"
                                 fontSize="61" fontWeight="700" fill="#FFFFFF" letterSpacing="5">CINEQ</text>
-                            <rect x="30" y="65" width="288" height="2" fill="#C62828"/>
+                            <rect x="30" y="65" width="288" height="2" fill="#C62828" />
                             <text x="30" y="77"
                                 fontFamily="Arial, Helvetica, sans-serif"
                                 fontSize="9" fill="#E6B852" letterSpacing="4">CINEMA · INTELLIGENCE</text>
@@ -75,16 +86,40 @@ export default function Header() {
                         )}
                     </div>
 
-                    {/* ── Center Ad ── */}
-                    <div className="hidden md:flex justify-center items-center w-full max-w-[600px] mx-6 overflow-hidden relative"
-                        style={{ height: 44, background: "#1A1A1A", borderRadius: 6 }}>
-                        <Image
-                            src="/ads/header-banner.jpg"
-                            alt="Advertisement"
-                            fill
-                            className="object-contain"
+                    {/* 🔍 NEW: Search (Netflix style) */}
+                    <div className="hidden md:flex flex-1 max-w-md mx-6">
+                        <input
+                            type="text"
+                            placeholder="Search movies, actors, directors..."
+                            className="w-full px-4 py-2 rounded-md text-sm"
+                            style={{
+                                background: "#1A1A1A",
+                                color: "#FFFFFF",
+                                border: "1px solid #333",
+                                outline: "none"
+                            }}
                         />
                     </div>
+
+                    {/* 🎬 NEW: Live Info */}
+                    <div className="hidden lg:flex items-center text-xs text-gray-400 whitespace-nowrap mr-4">
+                        <span style={{ color: "#E6B852" }}>● LIVE</span>
+
+                        <span className="ml-2">
+                            {todayBirthdays.length === 0
+                                ? "No birthdays today"
+                                : `${todayBirthdays.length} Birthdays today`}
+                        </span>
+
+                        {todayBirthdays.length > 0 && (
+                            <>
+                                <span className="mx-2">•</span>
+                                <span>{todayBirthdays.length} Celebrations</span>
+                            </>
+                        )}
+                    </div>
+
+                   
 
                     {/* ── Desktop Nav ── */}
                     <nav className="hidden md:flex items-center space-x-1">

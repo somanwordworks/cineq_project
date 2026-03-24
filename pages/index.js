@@ -319,10 +319,38 @@ function LiveTicker() {
 function BirthdayBar() {
     return (
         <div style={{ background: T.gold, borderRadius: 8, padding: "9px 16px", display: "flex", alignItems: "center", gap: 14, overflow: "hidden", marginBottom: 24 }}>
-            <span style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 12, letterSpacing: "0.15em", color: T.ink, flexShrink: 0 }}>BIRTHDAYS</span>
+            <span style={{
+                fontFamily: "'Bebas Neue',Impact,sans-serif",
+                fontSize: 12,
+                letterSpacing: "0.18em",
+                color: "#111",
+                flexShrink: 0,
+
+                padding: "6px 14px",
+                borderRadius: 6,
+
+                background: "linear-gradient(135deg, #E6B852, #FFD978)",
+
+                boxShadow: `
+        0 0 10px rgba(230, 184, 82, 0.6),
+        0 0 20px rgba(230, 184, 82, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.3)
+    `,
+
+                border: "1px solid rgba(0,0,0,0.1)"
+            }}>
+                BIRTHDAYS
+            </span>
             <div style={{ overflow: "hidden", flex: 1 }}>
-                <div style={{ display: "inline-block", animation: "cineqTicker 20s linear infinite", whiteSpace: "nowrap", fontSize: 12, fontWeight: 500, color: T.ink }}>
-                    <BirthdayBanner />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BirthdayBanner />
+                <div style={{
+                    display: "flex",
+                    gap: "60px", // 🔥 IMPORTANT spacing between loops
+                    animation: "cineqTicker 30s linear infinite", // 🔥 slower = premium feel
+                    whiteSpace: "nowrap",
+                    width: "max-content"
+                }}>
+                    <BirthdayBanner />
+                    <BirthdayBanner />
                 </div>
             </div>
         </div>
@@ -521,7 +549,7 @@ function TrendingTeluguBlock() {
             <CardHead title="TRENDING THIS WEEK" right="Via TMDB" />
             <div style={{ maxHeight: 560, overflowY: "auto" }} className="cineq-custom-scroll">
                 {loading ? Array.from({ length: 7 }).map((_, i) => (
-                    <div key={i} style={{ height: 60, margin: "4px 12px", borderRadius: 8, animation: "cineqShimmer 1.5s infinite", background: `linear-gradient(90deg, #F2EFE8 25%, #E2DDD5 50%, #F2EFE8 75%)`, backgroundSize: "200% 100%" }} />
+                    <div key={i} style={{ height: 60, margin: "4px 12px", borderRadius: 8, animation: "cineqTicker 60s infinite", background: `linear-gradient(90deg, #F2EFE8 25%, #E2DDD5 50%, #F2EFE8 75%)`, backgroundSize: "200% 100%" }} />
                 )) : movies.length === 0 ? (
                     <div style={{ padding: 32, textAlign: "center", color: "#8A8680", fontSize: 13, fontStyle: "italic" }}>No data right now.</div>
                 ) : movies.map((m, idx) => (

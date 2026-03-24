@@ -21,14 +21,18 @@ const BirthdayBanner = () => {
     }, []);
 
     if (todayBirthdays.length === 0) {
-        return <span> No celebrations today </span>;
+        return (
+            <span style={{ marginRight: 80 }}>
+                No celebrations today
+            </span>
+        );
     }
 
     return (
         <>
             {todayBirthdays.map((star, idx) => (
-                <span key={idx} className="mx-4">
-                    🎂 Happy Birthday {star.name}!
+                <span key={idx} style={{ marginRight: 80 }}>
+                    🎂 {star.name}
                 </span>
             ))}
         </>
