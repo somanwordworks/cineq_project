@@ -2,7 +2,7 @@
 ///pages/directors/telugu/[slug].jsx//
 
 import { useRouter } from "next/router";
-import DirectorTree from "@/components/DirectorTree";
+import DirectorTree from '../../../components/DirectorTree'
 
 export default function DirectorTreePage() {
   const router = useRouter();
