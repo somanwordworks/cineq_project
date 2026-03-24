@@ -6,8 +6,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import data from '../../../data/directors-telugu'
-import Header from "@/components/Header";     // ← Added
-import Footer from "@/components/Footer";
+import Header from '../../../components/Header'
+import data from '../../../data/directors-telugu'
 
 export default function TeluguDirectorsPage() {
   const [search, setSearch] = useState("");
