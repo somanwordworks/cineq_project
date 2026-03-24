@@ -7,12 +7,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import data from '../../../data/directors-telugu'
 import Header from '../../../components/Header'
+import Footer from '../../../components/Footer'
 
 
 export default function TeluguDirectorsPage() {
   const [search, setSearch] = useState("");
 
-  const directorList = Object.values(directorsTelugu);
+    const directorList = Object.values(data);
 
   const filtered = directorList.filter((dir) =>
     dir.name.toLowerCase().includes(search.toLowerCase())
