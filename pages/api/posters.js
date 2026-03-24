@@ -1,21 +1,17 @@
-// pages/api/posters.js
-import Airtable from "airtable";
-
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+import { getMustWatchOTT } from '../../lib/airtable';
 
 export default async function handler(req, res) {
-  try {
-    const records = await base("Posters").select({}).all();
-
-    const results = records.map((rec) => ({
-      id: rec.id,
-      title: rec.get("Title") || "Untitled",
-      poster: rec.get("Poster")?.[0]?.url || null,
-    }));
-
-    res.status(200).json({ results });
-  } catch (err) {
-    console.error("❌ Airtable fetch failed:", err.message);
-    res.status(500).json({ error: "Failed to fetch posters" });
-  }
+    try {
+        const records = await getMustWatchOTT();
+        const results = records.map((r) => ({
+            id: r.id,
+            title: r.title,
+            poster: r.poster || null,
+        }));
+        res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+        res.status(200).json({ results });
+    } catch (err) {
+        console.error('Posters API error:', err.message);
+        res.status(200).json({ results: [] });
+    }
 }

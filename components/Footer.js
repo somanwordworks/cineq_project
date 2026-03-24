@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState } from "react";
 import LegalModal from "./LegalModal";
 
@@ -7,96 +6,116 @@ export default function Footer() {
 
     return (
         <>
-            <footer className="bg-[#C62828] text-white mt-12">
-                {/* Gold accent line */}
-                <div className="h-1 bg-[#E6B852]" />
+            <footer style={{ background: "#0F0F0F", borderTop: "2px solid #E6B852", marginTop: 48 }}>
 
-                <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+                <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 32px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 40, alignItems: "start" }}>
 
-                    {/* LEFT COLUMN — DNV ARC */}
-                    <div className="flex flex-col justify-between h-full">
-                        <div></div>
+                    {/* ── LEFT — DNV ARC ── */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                        {/* Film strip logo inline SVG */}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" height="36" width="144">
+                            <rect x="0" y="0" width="20" height="80" fill="#C62828"/>
+                            <rect x="0" y="2"  width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="13" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="24" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="35" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="46" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="57" width="20" height="7" fill="#E6B852"/>
+                            <rect x="0" y="68" width="20" height="7" fill="#E6B852"/>
+                            <text x="30" y="57"
+                                fontFamily="'Bebas Neue', Impact, 'Arial Black', sans-serif"
+                                fontSize="61" fontWeight="700" fill="#FFFFFF" letterSpacing="5">CINEQ</text>
+                            <rect x="30" y="65" width="288" height="2" fill="#C62828"/>
+                            <text x="30" y="77"
+                                fontFamily="Arial, Helvetica, sans-serif"
+                                fontSize="9" fill="#E6B852" letterSpacing="4">CINEMA · INTELLIGENCE</text>
+                        </svg>
 
-                        <div
-                            className="opacity-80 text-white text-xs"
-                            style={{
-                                fontFamily: "BankGothicLtBTLight",
-                                letterSpacing: "0.10em",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            A DNV ARC DIGITAL EXPERIENCE
+                        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.7, marginTop: 4 }}>
+                            Sharp, data-driven Telugu cinema coverage. Trending films, trailers, OTT releases — updated daily.
+                        </p>
+
+                        <div style={{ fontFamily: "BankGothicLtBTLight, Arial, sans-serif", fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: 8 }}>
+                            A DNV ARC Digital Experience
                         </div>
                     </div>
 
-                    {/* CENTER COLUMN — Logo + Tagline */}
-                    <div className="flex flex-col items-center text-center">
-                        <Image
-                            src="/cineq-logo.png"
-                            alt="CINEQ Logo"
-                            width={140}
-                            height={140}
-                            className="mb-3"
-                        />
+                    {/* ── CENTER — Tagline + Divider ── */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", paddingTop: 4 }}>
+                        <div style={{ width: 1, height: 40, background: "rgba(230,184,82,0.3)", marginBottom: 20 }} />
 
-                        <p className="text-[#F9D65C] text-sm italic">
-                            Lights. Camera. Data.
+                        <p style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 22, letterSpacing: "0.18em", color: "#E6B852", marginBottom: 8 }}>
+                            LIGHTS · CAMERA · DATA
                         </p>
 
-                        <div className="w-24 h-[2px] bg-[#E6B852] mt-3" />
+                        <div style={{ width: 60, height: 2, background: "#C62828", marginBottom: 20 }} />
+
+                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                            Telugu · Tamil · Hindi · Malayalam · Kannada
+                        </p>
+
+                        <div style={{ width: 1, height: 40, background: "rgba(230,184,82,0.3)", marginTop: 20 }} />
                     </div>
 
-                    {/* RIGHT COLUMN — Contact + Legal */}
-                    <div className="text-right text-sm text-gray-100">
-                        <p className="mb-4">
-                            For collaborations, media partnerships, or queries:
-                            <br />
-                            <a
-                                href="mailto:contact@dnvarc.com"
-                                className="text-[#F9D65C] hover:text-[#E6B852] transition-colors"
-                            >
+                    {/* ── RIGHT — Contact + Legal ── */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12, textAlign: "right" }}>
+                        <div>
+                            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+                                Collaborations &amp; Partnerships
+                            </p>
+                            <a href="mailto:contact@dnvarc.com"
+                                style={{ fontSize: 14, color: "#E6B852", textDecoration: "none", fontWeight: 600, letterSpacing: "0.02em" }}
+                                onMouseEnter={e => e.currentTarget.style.color = "#FFFFFF"}
+                                onMouseLeave={e => e.currentTarget.style.color = "#E6B852"}>
                                 contact@dnvarc.com
                             </a>
-                        </p>
+                        </div>
 
-                        <p className="text-xs mb-4">
-                            © {new Date().getFullYear()}{" "}
-                            <span className="font-semibold">CINEQ</span> • Powered by{" "}
-                            <span className="text-[#F9D65C]">DNV ARC</span>
-                        </p>
-
-                        <a
-                            href="https://www.DNVARC.COM"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#F9D65C] underline text-xs"
-                        >
+                        <a href="https://www.DNVARC.COM" target="_blank" rel="noopener noreferrer"
+                            style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none", letterSpacing: "0.05em" }}
+                            onMouseEnter={e => e.currentTarget.style.color = "#E6B852"}
+                            onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>
                             www.dnvarc.com
                         </a>
 
-                        {/* Terms & Privacy */}
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={() => setOpen(true)}
-                                className="
-            text-xs
-            font-medium
-            underline
-            text-[#F9D65C]
-            hover:text-white
-            transition
-        "
-                            >
-                                Terms & Privacy
-                            </button>
-                        </div>
+                        <button onClick={() => setOpen(true)}
+                            style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", padding: 0, letterSpacing: "0.05em" }}
+                            onMouseEnter={e => e.currentTarget.style.color = "#E6B852"}
+                            onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>
+                            Terms &amp; Privacy
+                        </button>
+                    </div>
 
+                </div>
+
+                {/* ── Bottom bar ── */}
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "14px 32px", maxWidth: 1280, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", letterSpacing: "0.04em" }}>
+                        © {new Date().getFullYear()} <span style={{ color: "rgba(255,255,255,0.55)", fontWeight: 600 }}>CINEQ</span> · Powered by <span style={{ color: "#E6B852" }}>DNV ARC</span>
+                    </p>
+                    <div style={{ display: "flex", gap: 6 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#C62828" }} />
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#E6B852" }} />
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#C62828" }} />
                     </div>
                 </div>
+
             </footer>
 
-            {/* Legal Modal */}
             <LegalModal open={open} setOpen={setOpen} />
+
+            <style jsx>{`
+                @media (max-width: 768px) {
+                    footer > div:first-of-type {
+                        grid-template-columns: 1fr !important;
+                        text-align: center;
+                    }
+                    footer > div:first-of-type > div:last-child {
+                        align-items: center !important;
+                        text-align: center !important;
+                    }
+                }
+            `}</style>
         </>
     );
 }
