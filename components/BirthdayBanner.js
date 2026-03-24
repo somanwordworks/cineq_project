@@ -21,7 +21,7 @@ const BirthdayBanner = () => {
     }, []);
 
     if (todayBirthdays.length === 0) {
-        return <span>🌟 DATA RHINO - The News-Rhino of Tech. 🌟 Rhino Academy 🌟 Insights Group (Insightsgroup.io) </span>;
+        return <span> No celebrations today </span>;
     }
 
     return (
