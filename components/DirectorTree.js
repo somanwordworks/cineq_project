@@ -3,9 +3,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { directorsTelugu } from "@/data/directors-telugu";
-import TreeLegend from "@/components/TreeLegend";
-import DirectorModal from "@/components/DirectorModal";
+import data from '../data/directors-telugu'
+import TreeLegend from './TreeLegend'
+import DirectorModal from './DirectorModal'
 
 export default function DirectorTree({ slug }) {
   const svgRef = useRef();

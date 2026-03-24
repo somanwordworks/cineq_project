@@ -5,7 +5,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { directorsTelugu } from "@/data/directors-telugu";
+import data from '../../../data/directors-telugu'
 import Header from "@/components/Header";     // ← Added
 import Footer from "@/components/Footer";
 
