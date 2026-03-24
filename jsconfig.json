@@ -1,11 +1,8 @@
-
-
 {
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [ "*" ], // Added this line
-      "@styles/*": [ "styles/*" ]
+      "@/*": [ "./*" ]
     }
   }
 }
